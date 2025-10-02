@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Rekenspellen Index</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1000px;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    p {
+      margin-bottom: 40px;
+      color: #444;
+    }
+
+    .groepen {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+    }
+
+    .groep {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+
+    .groep:hover {
+      transform: translateY(-5px);
+    }
+
+    .groep h2 {
+      margin-bottom: 15px;
+    }
+
+    .games {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .games a {
+      text-decoration: none;
+    }
+
+    .games img {
+      width: 120px;
+      height: auto;
+      border-radius: 10px;
+      border: 2px solid #ccc;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .games img:hover {
+      transform: scale(1.1);
+      border-color: #0077cc;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Welkom bij de Rekenspellen!</h1>
+    <p>Klik op je groep en daarna op het spel dat je wilt spelen.</p>
+
+    <div class="groepen">
+      <!-- Groep 3 -->
+      <div class="groep">
+        <h2>Groep 3</h2>
+        <div class="games">
+          <a href="groep3_sommetjes.html">
+            <img src="images/groep3_sommen.png" alt="Sommetjes groep 3">
+          </a>
+          <a href="groep3_getallenlijn.html">
+            <img src="images/groep3_getallen.png" alt="Getallenlijn groep 3">
+          </a>
+        </div>
+      </div>
+
+      <!-- Groep 4 -->
+      <div class="groep">
+        <h2>Groep 4</h2>
+        <div class="games">
+          <a href="groep4_tafels.html">
+            <img src="images/groep4_tafels.png" alt="Tafels groep 4">
+          </a>
+          <a href="groep4_bewerkingen.html">
+            <img src="images/groep4_bewerkingen.png" alt="Bewerkingen groep 4">
+          </a>
+        </div>
+      </div>
+
+      <!-- Groep 5 -->
+      <div class="groep">
+        <h2>Groep 5</h2>
+        <div class="games">
+          <a href="groep5_breuken.html">
+            <img src="images/groep5_breuken.png" alt="Breuken groep 5">
+          </a>
+          <a href="groep5_klokkijken.html">
+            <img src="images/groep5_klok.png" alt="Klokkijken groep 5">
+          </a>
+        </div>
+      </div>
+
+      <!-- Groep 6 -->
+      <div class="groep">
+        <h2>Groep 6</h2>
+        <div class="games">
+          <a href="groep6_vermenigvuldigen.html">
+            <img src="images/groep6_vermenig.png" alt="Vermenigvuldigen groep 6">
+          </a>
+          <a href="groep6_delingen.html">
+            <img src="images/groep6_delingen.png" alt="Delingen groep 6">
+          </a>
+        </div>
+      </div>
+
+      <!-- Groep 7 -->
+      <div class="groep">
+        <h2>Groep 7</h2>
+        <div class="games">
+          <a href="groep7_breuken.html">
+            <img src="images/groep7_breuken.png" alt="Breuken groep 7">
+          </a>
+          <a href="groep7_procenten.html">
+            <img src="images/groep7_procenten.png" alt="Procenten groep 7">
+          </a>
+        </div>
+      </div>
+
+      <!-- Groep 8 -->
+      <div class="groep">
+        <h2>Groep 8</h2>
+        <div class="games">
+          <a href="groep8_verhoudingen.html">
+            <img src="images/groep8_verhoudingen.png" alt="Verhoudingen groep 8">
+          </a>
+          <a href="groep8_kommagetallen.html">
+            <img src="images/groep8_kommagetallen.png" alt="Kommagetallen groep 8">
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
