@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Rekenspellen Index</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      text-align: center;
+      padding: 20px;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+      color: white;
+      font-size: 2.5em;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    p {
+      margin-bottom: 40px;
+      color: white;
+      font-size: 1.2em;
+    }
+
+    .groepen {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+    }
+
+    .groep {
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      transition: transform 0.2s;
+    }
+
+    .groep:hover {
+      transform: translateY(-5px);
+    }
+
+    .groep h2 {
+      margin-bottom: 20px;
+      color: #333;
+      font-size: 1.8em;
+    }
+
+    .games {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .game-button {
+      display: block;
+      padding: 15px;
+      color: white;
+      text-decoration: none;
+      border-radius: 10px;
+      font-size: 1em;
+      font-weight: bold;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    }
+
+    .game-button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    /* Actieve knoppen - verschillende kleuren per groep */
+    .groep:nth-child(1) .game-button.active {
+      background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+      color: #333;
+    }
+
+    .groep:nth-child(2) .game-button.active {
+      background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+      color: #333;
+    }
+
+    .groep:nth-child(3) .game-button.active {
+      background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
+      color: #333;
+    }
+
+    .groep:nth-child(4) .game-button.active {
+      background: linear-gradient(135deg, #fdcbf1 0%, #e6dee9 100%);
+      color: #333;
+    }
+
+    .groep:nth-child(5) .game-button.active {
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+      color: #333;
+    }
+
+    .groep:nth-child(6) .game-button.active {
+      background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
+      color: white;
+    }
+
+    /* Grijze knoppen voor niet-actieve doelen */
+    .game-button.disabled {
+      background: #cccccc;
+      color: #666;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .game-button.disabled:hover {
+      transform: none;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    }
+
+    @media (max-width: 768px) {
+      .groepen {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Kies jouw rekendoel:</h1>
+    <p>Klik op een gekleurd rekendoel om te oefenen. Grijze doelen komen binnenkort!</p>
+
+    <div class="groepen">
+      <!-- Groep 3 -->
+      <div class="groep">
+        <h2>Groep 3</h2>
+        <div class="games">
+          <a href="groep3_splitsen_tot_10.html" class="game-button active">Splitsen tot 10</a>
+          <a href="groep3_plussommen_tot_10.html" class="game-button active">Plussommen tot 10</a>
+          <a href="groep3_minsommen_tot_10.html" class="game-button active">Minsommen tot 10</a>
+        </div>
+      </div>
+
+      <!-- Groep 4 -->
+      <div class="groep">
+        <h2>Groep 4</h2>
+        <div class="games">
+          <a href="groep4_plussommen_tot_20.html" class="game-button active">Plussommen tot 20</a>
+          <a href="groep4_plussommen_tot_20_over_10.html" class="game-button active">Plussommen tot 20 (over 10)</a>
+          <a href="groep4_minsommen_tot_20.html" class="game-button active">Minsommen tot 20</a>
+          <a href="groep4_minsommen_tot_20_over_10.html" class="game-button active">Minsommen tot 20 (over 10)</a>
+          <a href="groep4_keersommen.html" class="game-button active">Keersommen</a>
+        </div>
+      </div>
+
+      <!-- Groep 5 -->
+      <div class="groep">
+        <h2>Groep 5</h2>
+        <div class="games">
+          <a href="groep5_plussommen_tot_100.html" class="game-button active">Plussommen tot 100</a>
+          <a href="groep5_minsommen_tot_100.html" class="game-button active">Minsommen tot 100</a>
+          <a href="groep5_keersommen.html" class="game-button active">Keersommen</a>
+        </div>
+      </div>
+
+      <!-- Groep 6 -->
+      <div class="groep">
+        <h2>Groep 6</h2>
+        <div class="games">
+          <a class="game-button disabled">Binnenkort beschikbaar</a>
+          <a class="game-button disabled">Binnenkort beschikbaar</a>
+        </div>
+      </div>
+
+      <!-- Groep 7 -->
+      <div class="groep">
+        <h2>Groep 7</h2>
+        <div class="games">
+          <a class="game-button disabled">Binnenkort beschikbaar</a>
+          <a class="game-button disabled">Binnenkort beschikbaar</a>
+        </div>
+      </div>
+
+      <!-- Groep 8 -->
+      <div class="groep">
+        <h2>Groep 8</h2>
+        <div class="games">
+          <a class="game-button disabled">Binnenkort beschikbaar</a>
+          <a class="game-button disabled">Binnenkort beschikbaar</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
