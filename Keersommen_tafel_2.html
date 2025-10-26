@@ -340,7 +340,7 @@
             }
             const nieuweSom = genereerSom();
             sommen.push(nieuweSom);
-            document.getElementById('somTekst').textContent = `${nieuweSom.getal1} × ${nieuweSom.getal2} = ?`;
+            document.getElementById('somTekst').textContent = `${nieuweSom.getal2} × ${nieuweSom.getal1} = ?`;
             input.value = '';
             input.focus();
         }
@@ -367,7 +367,7 @@
                 const gebruikerAntwoordTekst = som.gebruikerAntwoord !== null ? som.gebruikerAntwoord : '(leeg)';
                 const statusIcon = isCorrect ? '✅' : '❌';
                 item.innerHTML = `
-                    <span>Som ${som.somNummer}: ${som.getal1} × ${som.getal2} = ${som.correctAntwoord}</span>
+                    <span>Som ${som.somNummer}: ${som.getal2} × ${som.getal1} = ${som.correctAntwoord}</span>
                     <span>${statusIcon} Jouw antwoord: ${gebruikerAntwoordTekst}</span>
                 `;
                 resultatenLijst.appendChild(item);
