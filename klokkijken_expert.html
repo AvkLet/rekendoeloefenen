@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Klokkijken - Expert Niveau</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(45deg, #a8edea, #fed6e3, #d299c2, #fef9d7);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .home-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1.1em;
+            border-radius: 25px;
+            cursor: pointer;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            z-index: 1000;
+        }
+
+        .home-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(0,0,0,0.4);
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 30px;
+            text-align: center;
+            max-width: 700px;
+            width: 90%;
+            animation: bounce 0.5s ease-out;
+        }
+
+        @keyframes bounce {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .title {
+            color: #ff6b6b;
+            font-size: 2.2em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .instructie {
+            font-size: 1.2em;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .digital-clock {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: #00ff00;
+            font-size: 4em;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+            padding: 20px 40px;
+            border-radius: 15px;
+            margin: 20px auto;
+            display: inline-block;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+            letter-spacing: 5px;
+        }
+
+        .clock-container {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .clock {
+            width: 300px;
+            height: 300px;
+            border: 8px solid white;
+            border-radius: 50%;
+            position: relative;
+            background: #f0f0f0;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+            cursor: pointer;
+        }
+
+        .clock-center {
+            width: 20px;
+            height: 20px;
+            background: #333;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+
+        .hour-marker {
+            position: absolute;
+            width: 2px;
+            height: 12px;
+            background: #333;
+            left: 50%;
+            transform-origin: center;
+        }
+
+        .hour-number {
+            position: absolute;
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .hand {
+            position: absolute;
+            transform-origin: bottom center;
+            left: 50%;
+            border-radius: 3px;
+        }
+
+        .hour-hand {
+            width: 8px;
+            height: 80px;
+            background: #333;
+            bottom: 50%;
+            margin-left: -4px;
+            z-index: 5;
+        }
+
+        .minute-hand {
+            width: 8px;
+            height: 120px;
+            background: #3498db;
+            bottom: 50%;
+            margin-left: -4px;
+            z-index: 6;
+            cursor: grab;
+        }
+
+        .minute-hand:active {
+            cursor: grabbing;
+        }
+
+        .sentence-container {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            font-size: 1.3em;
+            line-height: 2em;
+        }
+
+        .sentence-container input,
+        .sentence-container select {
+            font-size: 1em;
+            padding: 8px 12px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            margin: 0 5px;
+        }
+
+        .sentence-container input[type="number"] {
+            width: 60px;
+            text-align: center;
+        }
+
+        .sentence-container select {
+            cursor: pointer;
+        }
+
+        .button {
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 10px;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(0,0,0,0.3);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .stoplicht-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+        }
+
+        .stoplicht {
+            width: 80px;
+            height: 160px;
+            background: #333;
+            border-radius: 30px;
+            padding: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .licht {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #444;
+            border: 2px solid #666;
+            margin: 0;
+        }
+
+        .licht.rood-aan { background: #ff4444; box-shadow: 0 0 15px #ff4444; }
+        .licht.oranje-aan { background: #ffaa44; box-shadow: 0 0 15px #ffaa44; }
+        .licht.groen-aan { background: #44ff44; box-shadow: 0 0 15px #44ff44; }
+
+        .button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .resultaten {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .resultaat-item {
+            display: flex;
+            flex-direction: column;
+            padding: 12px;
+            border-bottom: 1px solid #dee2e6;
+            font-size: 1em;
+            gap: 5px;
+        }
+
+        .resultaat-item:last-child { border-bottom: none; }
+        .correct { color: #28a745; }
+        .wrong { color: #dc3545; }
+
+        .score-summary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .score-summary h3 { margin-top: 0; }
+
+        .score-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .score-item {
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .hidden { display: none; }
+        .game-screen { display: none; }
+        .results-screen { display: none; }
+        .start-screen { text-align: center; }
+
+        .hint {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 10px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="home-button">🏠 Home</a>
+
+    <div class="container">
+        <!-- Start scherm -->
+        <div class="start-screen" id="startScreen">
+            <h1 class="title">🕐 Klokkijken - Expert</h1>
+            <p class="instructie">Sleep de blauwe minutenwijzer naar de juiste plek<br>en vul de zin in!<br>Je hebt 5 minuten de tijd. Succes!</p>
+            <button class="button" id="startBtn" onclick="startTimer()">🚀 Start</button>
+        </div>
+        
+        <!-- Spel scherm -->
+        <div class="game-screen" id="gameScreen">
+            <div class="stoplicht-container">
+                <div class="stoplicht">
+                    <div class="licht" id="roodLicht"></div>
+                    <div class="licht" id="oranjeLicht"></div>
+                    <div class="licht groen-aan" id="groenLicht"></div>
+                </div>
+            </div>
+            
+            <div class="digital-clock" id="digitalClock">00:00</div>
+            
+            <div class="clock-container">
+                <div class="clock" id="clock">
+                    <div class="clock-center"></div>
+                    <div class="hand hour-hand" id="hourHand"></div>
+                    <div class="hand minute-hand" id="minuteHand"></div>
+                </div>
+            </div>
+            
+            <p class="hint">💡 Sleep de blauwe wijzer naar de juiste minuten</p>
+            
+            <div class="sentence-container">
+                Het is 
+                <input type="number" id="minutenAantal" placeholder="?" min="5" max="10" style="width: 50px;">
+                <select id="voorOver">
+                    <option value="">?</option>
+                    <option value="voor">voor</option>
+                    <option value="over">over</option>
+                </select>
+                <input type="number" id="uurInZin" placeholder="?" min="1" max="12" style="width: 50px;">
+                in de
+                <select id="dagdeel">
+                    <option value="">?</option>
+                    <option value="nacht">nacht</option>
+                    <option value="ochtend">ochtend</option>
+                    <option value="middag">middag</option>
+                    <option value="avond">avond</option>
+                </select>
+            </div>
+            
+            <button class="button" onclick="volgendeTijd()">→ Volgende</button>
+        </div>
+        
+        <!-- Resultaten scherm -->
+        <div class="results-screen" id="resultsScreen">
+            <h2 class="title">📊 Jouw Resultaten</h2>
+            
+            <div class="score-summary" id="scoreSummary">
+                <h3>Totale Score</h3>
+                <div class="score-grid">
+                    <div class="score-item">
+                        <div>✅ Goed</div>
+                        <div id="goedTotaal">0</div>
+                    </div>
+                    <div class="score-item">
+                        <div>📝 Totaal klokken</div>
+                        <div id="totaalKlokken">0</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="resultaten" id="resultatenLijst"></div>
+            
+            <button class="button" onclick="opnieuwBeginnen()">🔄 Opnieuw</button>
+        </div>
+    </div>
+
+    <script>
+        let tijden = [];
+        let tijdOver = 300; // 5 minuten
+        let timerInterval;
+        let spelActief = false;
+        let isDragging = false;
+        let huidigeTijd = null;
+
+        function initClock() {
+            const clock = document.getElementById('clock');
+            
+            // Voeg uurmarkeringen en cijfers toe
+            for (let i = 1; i <= 12; i++) {
+                // Cijfers
+                const number = document.createElement('div');
+                number.className = 'hour-number';
+                number.textContent = i;
+                const angle = (i * 30 - 90) * (Math.PI / 180);
+                const radius = 115;
+                const x = 150 + radius * Math.cos(angle);
+                const y = 150 + radius * Math.sin(angle);
+                number.style.left = (x - 10) + 'px';
+                number.style.top = (y - 10) + 'px';
+                clock.appendChild(number);
+                
+                // Streepjes voor alle 12 uren
+                const marker = document.createElement('div');
+                marker.className = 'hour-marker';
+                marker.style.top = '10px';
+                marker.style.transformOrigin = 'center 140px';
+                marker.style.transform = `translateX(-50%) rotate(${i * 30}deg)`;
+                clock.appendChild(marker);
+            }
+
+            // Dragging functionality
+            const minuteHand = document.getElementById('minuteHand');
+            const clock_elem = document.getElementById('clock');
+
+            minuteHand.addEventListener('mousedown', startDragging);
+            minuteHand.addEventListener('touchstart', startDragging);
+            
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('touchmove', drag);
+            
+            document.addEventListener('mouseup', stopDragging);
+            document.addEventListener('touchend', stopDragging);
+        }
+
+        function startDragging(e) {
+            if (!spelActief) return;
+            e.preventDefault();
+            isDragging = true;
+        }
+
+        function drag(e) {
+            if (!isDragging || !spelActief) return;
+            e.preventDefault();
+            
+            const clock = document.getElementById('clock');
+            const rect = clock.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+            const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+            
+            const deltaX = clientX - centerX;
+            const deltaY = clientY - centerY;
+            
+            let angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI) + 90;
+            if (angle < 0) angle += 360;
+            
+            const minuteHand = document.getElementById('minuteHand');
+            minuteHand.style.transform = `translateX(-50%) rotate(${angle}deg)`;
+        }
+
+        function stopDragging() {
+            isDragging = false;
+        }
+
+        function genereerTijd() {
+            const mogelijkeMinuten = [5, 10, 50, 55];
+            const minuten = mogelijkeMinuten[Math.floor(Math.random() * mogelijkeMinuten.length)];
+            const uur = Math.floor(Math.random() * 24); // 0-23 voor 24-uurs klok
+            
+            // Bepaal 12-uurs formaat voor de zin
+            let uur12 = uur % 12;
+            if (uur12 === 0) uur12 = 12;
+            
+            // Bepaal dagdeel
+            let dagdeel;
+            if (uur >= 0 && uur < 6) dagdeel = 'nacht';
+            else if (uur >= 6 && uur < 12) dagdeel = 'ochtend';
+            else if (uur >= 12 && uur < 18) dagdeel = 'middag';
+            else dagdeel = 'avond';
+            
+            // Bepaal "voor" of "over" en welk uur
+            let voorOver, zinUur, minutenAantal;
+            if (minuten === 5) {
+                voorOver = 'over';
+                zinUur = uur12;
+                minutenAantal = 5;
+            } else if (minuten === 10) {
+                voorOver = 'over';
+                zinUur = uur12;
+                minutenAantal = 10;
+            } else if (minuten === 50) {
+                voorOver = 'voor';
+                zinUur = uur12 === 12 ? 1 : uur12 + 1;
+                minutenAantal = 10;
+            } else { // 55
+                voorOver = 'voor';
+                zinUur = uur12 === 12 ? 1 : uur12 + 1;
+                minutenAantal = 5;
+            }
+            
+            return {
+                uur24: uur,
+                minuten: minuten,
+                uur12: uur12,
+                dagdeel: dagdeel,
+                voorOver: voorOver,
+                zinUur: zinUur,
+                minutenAantal: minutenAantal,
+                correctMinutenHoek: minuten * 6,
+                gebruikerMinutenHoek: null,
+                gebruikerMinutenAantal: null,
+                gebruikerVoorOver: null,
+                gebruikerZinUur: null,
+                gebruikerDagdeel: null,
+                tijdNummer: tijden.length + 1
+            };
+        }
+
+        function tekenKlok(tijd) {
+            const hourHand = document.getElementById('hourHand');
+            const minuteHand = document.getElementById('minuteHand');
+            const digitalClock = document.getElementById('digitalClock');
+            
+            // Toon digitale tijd
+            const uurStr = tijd.uur24.toString().padStart(2, '0');
+            const minutenStr = tijd.minuten.toString().padStart(2, '0');
+            digitalClock.textContent = `${uurStr}:${minutenStr}`;
+            
+            // Zet uurwijzer correct
+            const hourAngle = (tijd.uur12 % 12) * 30 + (tijd.minuten / 60) * 30;
+            hourHand.style.transform = `translateX(-50%) rotate(${hourAngle}deg)`;
+            
+            // Reset minutenwijzer naar 12
+            minuteHand.style.transform = `translateX(-50%) rotate(0deg)`;
+        }
+
+        function getMinuteHandAngle() {
+            const minuteHand = document.getElementById('minuteHand');
+            const transform = minuteHand.style.transform;
+            const match = transform.match(/rotate\(([^)]+)deg\)/);
+            if (match) {
+                let angle = parseFloat(match[1]);
+                // Normaliseer naar 0-360
+                while (angle < 0) angle += 360;
+                while (angle >= 360) angle -= 360;
+                return Math.round(angle);
+            }
+            return 0;
+        }
+
+        function startTimer() {
+            initClock();
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('gameScreen').style.display = 'block';
+            
+            tijden = [];
+            tijdOver = 300;
+            spelActief = true;
+            
+            timerInterval = setInterval(updateTimer, 1000);
+            volgendeTijd();
+        }
+
+        function updateTimer() {
+            tijdOver--;
+            const roodLicht = document.getElementById('roodLicht');
+            const oranjeLicht = document.getElementById('oranjeLicht');
+            const groenLicht = document.getElementById('groenLicht');
+            
+            if (tijdOver <= 0) {
+                roodLicht.classList.add('rood-aan');
+                oranjeLicht.classList.remove('oranje-aan');
+                groenLicht.classList.remove('groen-aan');
+                clearInterval(timerInterval);
+                spelActief = false;
+                toonResultaten();
+            } else if (tijdOver <= 150) {
+                oranjeLicht.classList.add('oranje-aan');
+                groenLicht.classList.remove('groen-aan');
+                roodLicht.classList.remove('rood-aan');
+            }
+        }
+
+        function volgendeTijd() {
+            if (!spelActief) return;
+            
+            // Sla antwoorden op van vorige vraag
+            if (tijden.length > 0) {
+                const vorigeTijd = tijden[tijden.length - 1];
+                vorigeTijd.gebruikerMinutenHoek = getMinuteHandAngle();
+                vorigeTijd.gebruikerMinutenAantal = parseInt(document.getElementById('minutenAantal').value) || null;
+                vorigeTijd.gebruikerVoorOver = document.getElementById('voorOver').value || null;
+                vorigeTijd.gebruikerZinUur = parseInt(document.getElementById('uurInZin').value) || null;
+                vorigeTijd.gebruikerDagdeel = document.getElementById('dagdeel').value || null;
+            }
+            
+            // Genereer nieuwe tijd
+            const nieuweTijd = genereerTijd();
+            tijden.push(nieuweTijd);
+            huidigeTijd = nieuweTijd;
+            tekenKlok(nieuweTijd);
+            
+            // Reset inputs
+            document.getElementById('minutenAantal').value = '';
+            document.getElementById('voorOver').value = '';
+            document.getElementById('uurInZin').value = '';
+            document.getElementById('dagdeel').value = '';
+        }
+
+        function toonResultaten() {
+            // Sla laatste antwoorden op
+            if (tijden.length > 0) {
+                const laatsteTijd = tijden[tijden.length - 1];
+                laatsteTijd.gebruikerMinutenHoek = getMinuteHandAngle();
+                laatsteTijd.gebruikerMinutenAantal = parseInt(document.getElementById('minutenAantal').value) || null;
+                laatsteTijd.gebruikerVoorOver = document.getElementById('voorOver').value || null;
+                laatsteTijd.gebruikerZinUur = parseInt(document.getElementById('uurInZin').value) || null;
+                laatsteTijd.gebruikerDagdeel = document.getElementById('dagdeel').value || null;
+            }
+            
+            document.getElementById('gameScreen').style.display = 'none';
+            document.getElementById('resultsScreen').style.display = 'block';
+            
+            let goed = 0;
+            const totaal = tijden.length;
+            const resultatenLijst = document.getElementById('resultatenLijst');
+            resultatenLijst.innerHTML = '';
+            
+            tijden.forEach(tijd => {
+                // Check if minute hand is within 15 degrees of correct position
+                let hoekVerschil = Math.abs(tijd.gebruikerMinutenHoek - tijd.correctMinutenHoek);
+                if (hoekVerschil > 180) hoekVerschil = 360 - hoekVerschil;
+                const wijzerGoed = hoekVerschil <= 15;
+                
+                const zinGoed = tijd.gebruikerMinutenAantal === tijd.minutenAantal &&
+                               tijd.gebruikerVoorOver === tijd.voorOver &&
+                               tijd.gebruikerZinUur === tijd.zinUur &&
+                               tijd.gebruikerDagdeel === tijd.dagdeel;
+                
+                const alleGoed = wijzerGoed && zinGoed;
+                if (alleGoed) goed++;
+                
+                const item = document.createElement('div');
+                item.className = `resultaat-item ${alleGoed ? 'correct' : 'wrong'}`;
+                
+                const statusIcon = alleGoed ? '✅' : '❌';
+                const correctZin = `Het is ${tijd.minutenAantal} ${tijd.voorOver} ${tijd.zinUur} in de ${tijd.dagdeel}`;
+                const gebruikerZin = `Het is ${tijd.gebruikerMinutenAantal || '?'} ${tijd.gebruikerVoorOver || '?'} ${tijd.gebruikerZinUur || '?'} in de ${tijd.gebruikerDagdeel || '?'}`;
+                
+                item.innerHTML = `
+                    <strong>${statusIcon} Klok ${tijd.tijdNummer}: ${tijd.uur24.toString().padStart(2, '0')}:${tijd.minuten.toString().padStart(2, '0')}</strong>
+                    <span>Correct: ${correctZin}</span>
+                    <span>Jouw antwoord: ${gebruikerZin} ${wijzerGoed ? '✓' : '✗'} wijzer</span>
+                `;
+                resultatenLijst.appendChild(item);
+            });
+
+            document.getElementById('goedTotaal').textContent = goed;
+            document.getElementById('totaalKlokken').textContent = totaal;
+        }
+
+        function opnieuwBeginnen() {
+            document.getElementById('resultsScreen').style.display = 'none';
+            document.getElementById('startScreen').style.display = 'block';
+            document.getElementById('roodLicht').classList.remove('rood-aan');
+            document.getElementById('oranjeLicht').classList.remove('oranje-aan');
+            document.getElementById('groenLicht').classList.add('groen-aan');
+        }
+    </script>
+</body>
+</html>
