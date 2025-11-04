@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minsommen tot 1000 - Oefenen</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(45deg, #ff9a9e, #fad0c4, #fbc2eb, #a18cd1);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .home-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1.1em;
+            border-radius: 25px;
+            cursor: pointer;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            z-index: 1000;
+        }
+
+        .home-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(0,0,0,0.4);
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 30px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            animation: bounce 0.5s ease-out;
+        }
+
+        @keyframes bounce {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .title {
+            color: #ff6b6b;
+            font-size: 2.2em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .instructie {
+            font-size: 1.2em;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .som-container {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            font-size: 3em;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .input-container {
+            margin: 20px 0;
+        }
+
+        input[type="number"] {
+            font-size: 2em;
+            padding: 15px;
+            border: 3px solid #ff6b6b;
+            border-radius: 10px;
+            width: 150px;
+            text-align: center;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+        }
+
+        .button {
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 10px;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(0,0,0,0.3);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .stoplicht-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+        }
+
+        .stoplicht {
+            width: 80px;
+            height: 160px;
+            background: #333;
+            border-radius: 30px;
+            padding: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .licht {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #444;
+            border: 2px solid #666;
+            margin: 0;
+        }
+
+        .licht.rood-aan { background: #ff4444; box-shadow: 0 0 15px #ff4444; }
+        .licht.oranje-aan { background: #ffaa44; box-shadow: 0 0 15px #ffaa44; }
+        .licht.groen-aan { background: #44ff44; box-shadow: 0 0 15px #44ff44; }
+
+        .button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .resultaten {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .resultaat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #dee2e6;
+            font-size: 1.1em;
+        }
+
+        .resultaat-item:last-child { border-bottom: none; }
+        .correct { color: #28a745; }
+        .wrong { color: #dc3545; }
+
+        .score-summary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .score-summary h3 { margin-top: 0; }
+
+        .score-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .score-item {
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .hidden { display: none; }
+        .game-screen { display: none; }
+        .results-screen { display: none; }
+        .start-screen { text-align: center; }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="home-button">🏠 Home</a>
+
+    <div class="container">
+        <!-- Start scherm -->
+        <div class="start-screen" id="startScreen">
+            <h1 class="title">Minsommen tot 1000</h1>
+            <p class="instructie">Oefen minsommen met hondertaloverschrijding.<br>Je hebt 5 minuten de tijd. Succes!</p>
+            <button class="button" id="startBtn" onclick="startTimer()">🚀 Start</button>
+        </div>
+        
+        <!-- Spel scherm -->
+        <div class="game-screen" id="gameScreen">
+            <div class="stoplicht-container">
+                <div class="stoplicht">
+                    <div class="licht" id="roodLicht"></div>
+                    <div class="licht" id="oranjeLicht"></div>
+                    <div class="licht groen-aan" id="groenLicht"></div>
+                </div>
+            </div>
+            
+            <div class="som-container" id="somContainer">
+                <div id="somTekst"></div>
+            </div>
+            
+            <div class="input-container">
+                <input type="number" id="antwoordInput" placeholder="?" min="0" max="1000">
+            </div>
+            
+            <button class="button" onclick="volgendeSom()">→ Volgende</button>
+        </div>
+        
+        <!-- Resultaten scherm -->
+        <div class="results-screen" id="resultsScreen">
+            <h2 class="title">📊 Jouw Resultaten</h2>
+            
+            <div class="score-summary" id="scoreSummary">
+                <h3>Totale Score</h3>
+                <div class="score-grid">
+                    <div class="score-item">
+                        <div>✅ Goed</div>
+                        <div id="goedTotaal">0</div>
+                    </div>
+                    <div class="score-item">
+                        <div>📝 Totaal sommen</div>
+                        <div id="totaalSommen">0</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="resultaten" id="resultatenLijst"></div>
+            
+            <button class="button" onclick="opnieuwBeginnen()">🔄 Opnieuw</button>
+        </div>
+    </div>
+
+    <script>
+        let sommen = [];
+        let huidigeSomIndex = 0;
+        let tijdOver = 300; // 5 minuten = 300 seconden
+        let timerInterval;
+        let spelActief = false;
+
+        function genereerSom() {
+            let getal1, getal2, antwoord;
+            let restGetal1, restGetal2;
+            
+            do {
+                // Genereer getallen tussen 200 en 990 (veelvouden van 10)
+                getal1 = (Math.floor(Math.random() * 80) + 20) * 10;
+                getal2 = (Math.floor(Math.random() * 60) + 10) * 10;
+                
+                antwoord = getal1 - getal2;
+                
+                // Bepaal de rest na het weghalen van de hondertallen (tientallen + eenheden)
+                restGetal1 = getal1 % 100;
+                restGetal2 = getal2 % 100;
+                
+            } while (
+                getal1 <= getal2 || // getal1 moet groter zijn
+                antwoord < 100 || // antwoord moet minimaal 100 zijn
+                antwoord >= 1000 || // antwoord moet onder 1000 blijven
+                restGetal1 >= restGetal2 // MOET overschrijden: rest van getal1 moet kleiner zijn dan rest van getal2
+            );
+            
+            return {
+                getal1,
+                getal2,
+                correctAntwoord: antwoord,
+                gebruikerAntwoord: null,
+                somNummer: sommen.length + 1
+            };
+        }
+
+        function startTimer() {
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('gameScreen').style.display = 'block';
+            
+            sommen = [];
+            huidigeSomIndex = 0;
+            tijdOver = 300;
+            spelActief = true;
+            
+            timerInterval = setInterval(updateTimer, 1000);
+            volgendeSom();
+            document.getElementById('antwoordInput').focus();
+        }
+
+        function updateTimer() {
+            tijdOver--;
+            const roodLicht = document.getElementById('roodLicht');
+            const oranjeLicht = document.getElementById('oranjeLicht');
+            const groenLicht = document.getElementById('groenLicht');
+            
+            if (tijdOver <= 0) {
+                roodLicht.classList.add('rood-aan');
+                oranjeLicht.classList.remove('oranje-aan');
+                groenLicht.classList.remove('groen-aan');
+                clearInterval(timerInterval);
+                spelActief = false;
+                toonResultaten();
+            } else if (tijdOver <= 150) { // 2,5 minuten = 150 seconden
+                oranjeLicht.classList.add('oranje-aan');
+                groenLicht.classList.remove('groen-aan');
+                roodLicht.classList.remove('rood-aan');
+            }
+        }
+
+        function volgendeSom() {
+            if (!spelActief) return;
+            const input = document.getElementById('antwoordInput');
+            if (sommen.length > 0 && input.value !== '') {
+                sommen[sommen.length - 1].gebruikerAntwoord = parseInt(input.value) || null;
+            }
+            const nieuweSom = genereerSom();
+            sommen.push(nieuweSom);
+            document.getElementById('somTekst').textContent = `${nieuweSom.getal1} - ${nieuweSom.getal2} = ?`;
+            input.value = '';
+            input.focus();
+        }
+
+        function toonResultaten() {
+            const input = document.getElementById('antwoordInput');
+            if (sommen.length > 0 && input.value !== '') {
+                sommen[sommen.length - 1].gebruikerAntwoord = parseInt(input.value) || null;
+            }
+            
+            document.getElementById('gameScreen').style.display = 'none';
+            document.getElementById('resultsScreen').style.display = 'block';
+            
+            let goed = 0;
+            const totaal = sommen.length;
+            const resultatenLijst = document.getElementById('resultatenLijst');
+            resultatenLijst.innerHTML = '';
+            
+            sommen.forEach(som => {
+                const isCorrect = som.gebruikerAntwoord === som.correctAntwoord;
+                if (isCorrect) goed++;
+                const item = document.createElement('div');
+                item.className = `resultaat-item ${isCorrect ? 'correct' : 'wrong'}`;
+                const gebruikerAntwoordTekst = som.gebruikerAntwoord !== null ? som.gebruikerAntwoord : '(leeg)';
+                const statusIcon = isCorrect ? '✅' : '❌';
+                item.innerHTML = `
+                    <span>Som ${som.somNummer}: ${som.getal1} - ${som.getal2} = ${som.correctAntwoord}</span>
+                    <span>${statusIcon} Jouw antwoord: ${gebruikerAntwoordTekst}</span>
+                `;
+                resultatenLijst.appendChild(item);
+            });
+
+            document.getElementById('goedTotaal').textContent = goed;
+            document.getElementById('totaalSommen').textContent = totaal;
+        }
+
+        function opnieuwBeginnen() {
+            document.getElementById('resultsScreen').style.display = 'none';
+            document.getElementById('startScreen').style.display = 'block';
+            document.getElementById('roodLicht').classList.remove('rood-aan');
+            document.getElementById('oranjeLicht').classList.remove('oranje-aan');
+            document.getElementById('groenLicht').classList.add('groen-aan');
+        }
+
+        document.getElementById('antwoordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && spelActief) {
+                volgendeSom();
+            }
+        });
+    </script>
+</body>
+</html>
