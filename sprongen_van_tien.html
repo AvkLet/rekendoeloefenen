@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sprongen van Tien - Flitser</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(45deg, #ffa07a, #ffb6c1, #ffd700, #ffb347);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .home-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1.1em;
+            border-radius: 25px;
+            cursor: pointer;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            z-index: 1000;
+        }
+
+        .home-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(0,0,0,0.4);
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 30px;
+            text-align: center;
+            max-width: 700px;
+            width: 90%;
+            animation: bounce 0.5s ease-out;
+        }
+
+        @keyframes bounce {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .title {
+            color: #ff6b6b;
+            font-size: 2.2em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .instructie {
+            font-size: 1.2em;
+            color: #333;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .vakjes-container {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
+            margin: 30px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 15px;
+        }
+
+        .vakje {
+            position: relative;
+        }
+
+        .vakje-label {
+            color: white;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="number"].vakje-input {
+            font-size: 1.8em;
+            padding: 15px 5px;
+            border: 3px solid #ff6b6b;
+            border-radius: 10px;
+            width: 100%;
+            text-align: center;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            box-sizing: border-box;
+        }
+
+        .vakje-input:disabled {
+            background: #e9ecef;
+            border-color: #6c757d;
+            color: #495057;
+            font-weight: bold;
+        }
+
+        .vakje-input.correct-answer {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+
+        .vakje-input.wrong-answer {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+
+        .button {
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 10px;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(0,0,0,0.3);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .stoplicht-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+        }
+
+        .stoplicht {
+            width: 80px;
+            height: 160px;
+            background: #333;
+            border-radius: 30px;
+            padding: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .licht {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #444;
+            border: 2px solid #666;
+            margin: 0;
+        }
+
+        .licht.rood-aan { background: #ff4444; box-shadow: 0 0 15px #ff4444; }
+        .licht.oranje-aan { background: #ffaa44; box-shadow: 0 0 15px #ffaa44; }
+        .licht.groen-aan { background: #44ff44; box-shadow: 0 0 15px #44ff44; }
+
+        .button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .resultaten {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .resultaat-item {
+            padding: 15px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #dee2e6;
+            font-size: 1.1em;
+        }
+
+        .resultaat-item:last-child { border-bottom: none; }
+
+        .resultaat-vakjes {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .resultaat-vakje {
+            padding: 10px 5px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1em;
+        }
+
+        .resultaat-vakje.correct {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .resultaat-vakje.wrong {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .resultaat-vakje.gegeven {
+            background: #e9ecef;
+            color: #495057;
+            border: 2px solid #6c757d;
+        }
+
+        .score-summary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .score-summary h3 { margin-top: 0; }
+
+        .score-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .score-item {
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .hidden { display: none; }
+        .game-screen { display: none; }
+        .results-screen { display: none; }
+        .start-screen { text-align: center; }
+
+        .timer-display {
+            color: white;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        @media (max-width: 768px) {
+            .vakjes-container {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .resultaat-vakjes {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="home-button">🏠 Home</a>
+
+    <div class="container">
+        <!-- Start scherm -->
+        <div class="start-screen" id="startScreen">
+            <h1 class="title">🔟 Sprongen van Tien</h1>
+            <p class="instructie">
+                Vul de reeks aan met sprongen van 10!<br>
+                Eén vakje is al ingevuld, vul de andere vakjes in.<br>
+                <strong>Je hebt 5 minuten de tijd. Veel succes!</strong>
+            </p>
+            <button class="button" id="startBtn" onclick="startSpel()">🚀 Start</button>
+        </div>
+        
+        <!-- Spel scherm -->
+        <div class="game-screen" id="gameScreen">
+            <div class="stoplicht-container">
+                <div class="stoplicht">
+                    <div class="licht" id="roodLicht"></div>
+                    <div class="licht" id="oranjeLicht"></div>
+                    <div class="licht groen-aan" id="groenLicht"></div>
+                </div>
+            </div>
+            
+            <h2 class="title">Opgave <span id="opgaveNummer">1</span></h2>
+            <div class="timer-display" id="timerDisplay">5:00</div>
+            
+            <div class="vakjes-container" id="vakjesContainer">
+                <!-- Vakjes worden hier dynamisch toegevoegd -->
+            </div>
+            
+            <button class="button" onclick="volgendeOpgave()">➡️ Volgende</button>
+        </div>
+        
+        <!-- Resultaten scherm -->
+        <div class="results-screen" id="resultsScreen">
+            <h2 class="title">📊 Jouw Resultaten</h2>
+            
+            <div class="score-summary" id="scoreSummary">
+                <h3>Totale Score</h3>
+                <div class="score-grid">
+                    <div class="score-item">
+                        <div>✅ Goed</div>
+                        <div id="goedTotaal">0</div>
+                    </div>
+                    <div class="score-item">
+                        <div>📝 Totaal opgaven</div>
+                        <div id="totaalOpgaven">0</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="resultaten" id="resultatenLijst"></div>
+            
+            <button class="button" onclick="opnieuwBeginnen()">🔄 Opnieuw</button>
+        </div>
+    </div>
+
+    <script>
+        let opgaven = [];
+        let huidigeOpgaveIndex = 0;
+        let tijdOver = 300; // 5 minuten = 300 seconden
+        let timerInterval;
+        let spelActief = false;
+
+        function genereerOpgave() {
+            // Genereer een startnummer tussen 1 en 90
+            const startGetal = Math.floor(Math.random() * 90) + 1;
+            
+            // Kies een willekeurige positie (0-5) voor het ingevulde vakje
+            const ingevuldePositie = Math.floor(Math.random() * 6);
+            
+            // Bereken het getal voor de ingevulde positie
+            const ingevuldGetal = startGetal + (ingevuldePositie * 10);
+            
+            // Bereken alle correcte antwoorden
+            const correcteAntwoorden = [];
+            for (let i = 0; i < 6; i++) {
+                correcteAntwoorden.push(startGetal + (i * 10));
+            }
+            
+            return {
+                startGetal: startGetal,
+                ingevuldePositie: ingevuldePositie,
+                ingevuldGetal: ingevuldGetal,
+                correcteAntwoorden: correcteAntwoorden,
+                gebruikerAntwoorden: Array(6).fill(null),
+                opgaveNummer: opgaven.length + 1
+            };
+        }
+
+        function startSpel() {
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('gameScreen').style.display = 'block';
+            
+            opgaven = [];
+            huidigeOpgaveIndex = 0;
+            tijdOver = 300;
+            spelActief = true;
+            
+            timerInterval = setInterval(updateTimer, 1000);
+            toonOpgave();
+        }
+
+        function updateTimer() {
+            tijdOver--;
+            
+            const minuten = Math.floor(tijdOver / 60);
+            const seconden = tijdOver % 60;
+            document.getElementById('timerDisplay').textContent = 
+                `${minuten}:${seconden.toString().padStart(2, '0')}`;
+            
+            const roodLicht = document.getElementById('roodLicht');
+            const oranjeLicht = document.getElementById('oranjeLicht');
+            const groenLicht = document.getElementById('groenLicht');
+            
+            if (tijdOver <= 0) {
+                roodLicht.classList.add('rood-aan');
+                oranjeLicht.classList.remove('oranje-aan');
+                groenLicht.classList.remove('groen-aan');
+                clearInterval(timerInterval);
+                spelActief = false;
+                toonResultaten();
+            } else if (tijdOver <= 120) { // Laatste 2 minuten
+                oranjeLicht.classList.add('oranje-aan');
+                groenLicht.classList.remove('groen-aan');
+                roodLicht.classList.remove('rood-aan');
+            }
+        }
+
+        function toonOpgave() {
+            // Maak een nieuwe opgave
+            const opgave = genereerOpgave();
+            opgaven.push(opgave);
+            
+            document.getElementById('opgaveNummer').textContent = opgave.opgaveNummer;
+            
+            // Maak de vakjes
+            const container = document.getElementById('vakjesContainer');
+            container.innerHTML = '';
+            
+            for (let i = 0; i < 6; i++) {
+                const vakjeDiv = document.createElement('div');
+                vakjeDiv.className = 'vakje';
+                
+                const label = document.createElement('div');
+                label.className = 'vakje-label';
+                label.textContent = `Vakje ${i + 1}`;
+                
+                const input = document.createElement('input');
+                input.type = 'number';
+                input.className = 'vakje-input';
+                input.id = `vakje${i}`;
+                input.min = '0';
+                input.max = '100';
+                
+                if (i === opgave.ingevuldePositie) {
+                    // Dit vakje is vooraf ingevuld
+                    input.value = opgave.ingevuldGetal;
+                    input.disabled = true;
+                } else {
+                    input.placeholder = '?';
+                }
+                
+                vakjeDiv.appendChild(label);
+                vakjeDiv.appendChild(input);
+                container.appendChild(vakjeDiv);
+            }
+            
+            // Focus op het eerste lege vakje
+            for (let i = 0; i < 6; i++) {
+                if (i !== opgave.ingevuldePositie) {
+                    document.getElementById(`vakje${i}`).focus();
+                    break;
+                }
+            }
+        }
+
+        function volgendeOpgave() {
+            if (!spelActief) return;
+            
+            // Sla de antwoorden op van de huidige opgave
+            const huidigeOpgave = opgaven[opgaven.length - 1];
+            for (let i = 0; i < 6; i++) {
+                const input = document.getElementById(`vakje${i}`);
+                if (i !== huidigeOpgave.ingevuldePositie) {
+                    huidigeOpgave.gebruikerAntwoorden[i] = input.value ? parseInt(input.value) : null;
+                } else {
+                    huidigeOpgave.gebruikerAntwoorden[i] = huidigeOpgave.ingevuldGetal;
+                }
+            }
+            
+            // Toon de volgende opgave
+            toonOpgave();
+        }
+
+        function toonResultaten() {
+            // Sla de antwoorden van de laatste opgave op
+            if (opgaven.length > 0) {
+                const laatsteOpgave = opgaven[opgaven.length - 1];
+                for (let i = 0; i < 6; i++) {
+                    const input = document.getElementById(`vakje${i}`);
+                    if (i !== laatsteOpgave.ingevuldePositie) {
+                        laatsteOpgave.gebruikerAntwoorden[i] = input.value ? parseInt(input.value) : null;
+                    } else {
+                        laatsteOpgave.gebruikerAntwoorden[i] = laatsteOpgave.ingevuldGetal;
+                    }
+                }
+            }
+            
+            document.getElementById('gameScreen').style.display = 'none';
+            document.getElementById('resultsScreen').style.display = 'block';
+            
+            let totaalGoed = 0;
+            let totaalIngevuld = 0;
+            const resultatenLijst = document.getElementById('resultatenLijst');
+            resultatenLijst.innerHTML = '';
+            
+            opgaven.forEach(opgave => {
+                const item = document.createElement('div');
+                item.className = 'resultaat-item';
+                
+                const header = document.createElement('div');
+                header.innerHTML = `<strong>Opgave ${opgave.opgaveNummer}:</strong> Sprongen van 10 vanaf ${opgave.startGetal}`;
+                item.appendChild(header);
+                
+                const vakjesDiv = document.createElement('div');
+                vakjesDiv.className = 'resultaat-vakjes';
+                
+                let opgaveGoed = 0;
+                let opgaveIngevuld = 0;
+                
+                for (let i = 0; i < 6; i++) {
+                    const vakje = document.createElement('div');
+                    
+                    if (i === opgave.ingevuldePositie) {
+                        vakje.className = 'resultaat-vakje gegeven';
+                        vakje.textContent = opgave.correcteAntwoorden[i];
+                    } else {
+                        const gebruikerAntwoord = opgave.gebruikerAntwoorden[i];
+                        const correctAntwoord = opgave.correcteAntwoorden[i];
+                        
+                        if (gebruikerAntwoord === correctAntwoord) {
+                            vakje.className = 'resultaat-vakje correct';
+                            vakje.textContent = `✓ ${gebruikerAntwoord}`;
+                            opgaveGoed++;
+                            totaalGoed++;
+                        } else {
+                            vakje.className = 'resultaat-vakje wrong';
+                            vakje.textContent = gebruikerAntwoord !== null ? 
+                                `✗ ${gebruikerAntwoord} (${correctAntwoord})` : 
+                                `✗ (${correctAntwoord})`;
+                        }
+                        opgaveIngevuld++;
+                        totaalIngevuld++;
+                    }
+                    
+                    vakjesDiv.appendChild(vakje);
+                }
+                
+                item.appendChild(vakjesDiv);
+                
+                const scoreDiv = document.createElement('div');
+                scoreDiv.style.marginTop = '10px';
+                scoreDiv.style.fontWeight = 'bold';
+                scoreDiv.innerHTML = `Score: ${opgaveGoed} / 5 goed`;
+                item.appendChild(scoreDiv);
+                
+                resultatenLijst.appendChild(item);
+            });
+
+            document.getElementById('goedTotaal').textContent = totaalGoed;
+            document.getElementById('totaalOpgaven').textContent = opgaven.length;
+        }
+
+        function opnieuwBeginnen() {
+            document.getElementById('resultsScreen').style.display = 'none';
+            document.getElementById('startScreen').style.display = 'block';
+            document.getElementById('roodLicht').classList.remove('rood-aan');
+            document.getElementById('oranjeLicht').classList.remove('oranje-aan');
+            document.getElementById('groenLicht').classList.add('groen-aan');
+            document.getElementById('timerDisplay').textContent = '5:00';
+        }
+
+        // Enter toets ondersteuning voor het wisselen tussen vakjes
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && spelActief) {
+                const activeElement = document.activeElement;
+                if (activeElement && activeElement.classList.contains('vakje-input')) {
+                    // Vind het volgende lege vakje of ga naar de volgende opgave
+                    const currentId = activeElement.id;
+                    const currentNum = parseInt(currentId.replace('vakje', ''));
+                    
+                    let nextFound = false;
+                    for (let i = currentNum + 1; i < 6; i++) {
+                        const nextInput = document.getElementById(`vakje${i}`);
+                        if (nextInput && !nextInput.disabled) {
+                            nextInput.focus();
+                            nextFound = true;
+                            break;
+                        }
+                    }
+                    
+                    if (!nextFound) {
+                        // Geen volgend vakje gevonden, ga naar volgende opgave
+                        volgendeOpgave();
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
