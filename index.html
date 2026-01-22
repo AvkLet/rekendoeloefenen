@@ -1,8 +1,8 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
-  <title>Rekenspellen Index</title>
+  <title>Rekenspellen - POWER</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -21,6 +21,48 @@
       padding: 20px;
     }
 
+    /* Toggle knoppen voor POWER/SPEED */
+    .mode-toggle {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .mode-button {
+      padding: 15px 40px;
+      font-size: 1.3em;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .mode-button.power {
+      background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+      color: #333;
+    }
+
+    .mode-button.speed {
+      background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+      color: #333;
+    }
+
+    .mode-button.active {
+      transform: scale(1.1);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+      border: 3px solid white;
+    }
+
+    .mode-button:hover:not(.active) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+    }
+
     h1 {
       margin-bottom: 10px;
       color: white;
@@ -34,13 +76,13 @@
       font-size: 1.2em;
     }
 
-    .groepen {
+    .onderwerpen {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 30px;
+      gap: 20px;
     }
 
-    .groep {
+    .onderwerp {
       background: white;
       padding: 25px;
       border-radius: 15px;
@@ -48,14 +90,14 @@
       transition: transform 0.2s;
     }
 
-    .groep:hover {
+    .onderwerp:hover {
       transform: translateY(-5px);
     }
 
-    .groep h2 {
+    .onderwerp h2 {
       margin-bottom: 20px;
       color: #333;
-      font-size: 1.8em;
+      font-size: 1.6em;
     }
 
     .games {
@@ -81,33 +123,33 @@
       box-shadow: 0 5px 15px rgba(0,0,0,0.3);
     }
 
-    /* Actieve knoppen - verschillende kleuren per groep */
-    .groep:nth-child(1) .game-button.active {
+    /* Actieve knoppen - verschillende kleuren per onderwerp */
+    .onderwerp:nth-child(1) .game-button.active {
       background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
       color: #333;
     }
 
-    .groep:nth-child(2) .game-button.active {
+    .onderwerp:nth-child(2) .game-button.active {
       background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
       color: #333;
     }
 
-    .groep:nth-child(3) .game-button.active {
+    .onderwerp:nth-child(3) .game-button.active {
       background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
       color: #333;
     }
 
-    .groep:nth-child(4) .game-button.active {
+    .onderwerp:nth-child(4) .game-button.active {
       background: linear-gradient(135deg, #fdcbf1 0%, #e6dee9 100%);
       color: #333;
     }
 
-    .groep:nth-child(5) .game-button.active {
+    .onderwerp:nth-child(5) .game-button.active {
       background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
       color: #333;
     }
 
-    .groep:nth-child(6) .game-button.active {
+    .onderwerp:nth-child(6) .game-button.active {
       background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
       color: white;
     }
@@ -126,100 +168,119 @@
     }
 
     @media (max-width: 768px) {
-      .groepen {
+      .onderwerpen {
         grid-template-columns: 1fr;
+      }
+      
+      .mode-toggle {
+        flex-direction: column;
+        gap: 10px;
       }
     }
   </style>
 </head>
 <body>
   <div class="container">
+    <!-- POWER/SPEED Toggle -->
+    <div class="mode-toggle">
+      <button class="mode-button power active">💪 POWER</button>
+      <a href="speed.html" class="mode-button speed">⚡ SPEED</a>
+    </div>
+
     <h1>Kies jouw rekendoel:</h1>
     <p>Klik op een gekleurd rekendoel om te oefenen. Grijze doelen komen binnenkort!</p>
 
-    <div class="groepen">
-      <!-- Groep 3 -->
-      <div class="groep">
-        <h2>Groep 3</h2>
+    <div class="onderwerpen">
+      <!-- Plussommen/Minsommen -->
+      <div class="onderwerp">
+        <h2>Plus-/Minsommen</h2>
         <div class="games">
-        <h4>Sommen tot 10</h4>
+          <h4>Tot 10</h4>
           <a href="groep3_plussommen_tot_10.html" class="game-button active">Plussommen tot 10</a>
           <a href="groep3_minsommen_tot_10.html" class="game-button active">Minsommen tot 10</a>
           <a href="groep3_splitsen_tot_10.html" class="game-button active">Splitsen</a>
-        </div>
-      </div>
-
-      <!-- Groep 4 -->
-      <div class="groep">
-        <h2>Groep 4</h2>
-        <div class="games">
-          <h4>Sommen tot 20</h4>
+          
+          <h4>Tot 20</h4>
           <a href="groep4_plussommen_tot_20.html" class="game-button active">Plussommen tot 20</a>
           <a href="groep4_plussommen_tot_20_over_10.html" class="game-button active">Plussommen tot 20 (over 10)</a>
           <a href="groep4_plussommen_tot_20_gemixt.html" class="game-button active">Plussommen tot 20 (Gemixt)</a>
           <a href="groep4_minsommen_tot_20.html" class="game-button active">Minsommen tot 20</a>
           <a href="groep4_minsommen_tot_20_over_10.html" class="game-button active">Minsommen tot 20 (over 10)</a>
           <a href="groep4_minsommen_tot_20_gemixt.html" class="game-button active">Minsommen tot 20 (Gemixt)</a>
-          <h4>Sommen tot 100</h4>
+          
+          <h4>Tot 100</h4>
           <a href="sprongen_van_tien.html" class="game-button active">Sprongen van 10</a>
-          <h4>Tafeltjes</h4>
-          <a href="Keersommen_tafel_1.html" class="game-button active">Keersommen Tafel 1</a>
-          <a href="Keersommen_tafel_2.html" class="game-button active">Keersommen Tafel 2</a>
-          <a href="Keersommen_tafel_5.html" class="game-button active">Keersommen Tafel 5</a>
-          <a href="Keersommen_tafel_10.html" class="game-button active">Keersommen Tafel 10</a>
-          <a href="Keersommen_tafels_1_2_5_10_gemixt.html" class="game-button active">Keersommen Gemixt (1,2,5 en 10)</a>
-          <h4>Klokkijken</h4>
-          <a href="klokkijken_hele_uren.html" class="game-button active">Klokkijken Uren</a>
-          <a href="klokkijken_halve_uren.html" class="game-button active">Klokkijken Halve Uren</a>
+          
+          <h4>Tot 1000</h4>
+          <a href="groep5_minsommen_tot_1000.html" class="game-button active">Minsommen tot 1000</a>
         </div>
       </div>
 
-      <!-- Groep 5 -->
-      <div class="groep">
-        <h2>Groep 5</h2>
+      <!-- Keersommen -->
+      <div class="onderwerp">
+        <h2>Keersommen</h2>
         <div class="games">
-          <h4>Sommen tot 1000</h4>
-          <a href="groep5_minsommen_tot_1000.html" class="game-button active">Minsommen tot 1000 (honderdtaloverschrijding)</a>
-          <h4>Tafeltjes</h4>
-          <a href="Keersommen_tafel_3.html" class="game-button active">Keersommen Tafel 3</a>
-          <a href="Keersommen_tafel_4.html" class="game-button active">Keersommen Tafel 4</a>
-          <a href="Keersommen_tafel_6.html" class="game-button active">Keersommen Tafel 6</a>
-          <a href="Keersommen_tafel_7.html" class="game-button active">Keersommen Tafel 7</a>
-          <a href="Keersommen_tafel_8.html" class="game-button active">Keersommen Tafel 8</a>
-          <a href="Keersommen_tafel_9.html" class="game-button active">Keersommen Tafel 9</a>
-          <a href="Keersommen_alle_tafels_1-10_gemixt.html" class="game-button active">Keersommen Gemixt (1-10)</a>
-          <h4>Deelsommen</h4>
-          <a href="Deelsommen_tafels_1-10_gemixt.html" class="game-button active">Deelsommen Gemixt</a>
-          <h4>Klokkijken</h4>
-          <a href="klokkijken_oefenen.html" class="game-button active">Klokkijken (kwart voor/over)</a>
-          <a href="klokkijken_5_10_minuten.html" class="game-button active">Klokkijken (5/10 minuten)</a>
-          <a href="klokkijken_digitaal.html" class="game-button active">Klokkijken Digitaal</a>
-          <a href="klokkijken_expert.html" class="game-button active">Klokkijken (vul de zin in)</a>
+          <h4>Tafels 1-5</h4>
+          <a href="Keersommen_tafel_1.html" class="game-button active">Tafel 1</a>
+          <a href="Keersommen_tafel_2.html" class="game-button active">Tafel 2</a>
+          <a href="Keersommen_tafel_3.html" class="game-button active">Tafel 3</a>
+          <a href="Keersommen_tafel_4.html" class="game-button active">Tafel 4</a>
+          <a href="Keersommen_tafel_5.html" class="game-button active">Tafel 5</a>
+          
+          <h4>Tafels 6-10</h4>
+          <a href="Keersommen_tafel_6.html" class="game-button active">Tafel 6</a>
+          <a href="Keersommen_tafel_7.html" class="game-button active">Tafel 7</a>
+          <a href="Keersommen_tafel_8.html" class="game-button active">Tafel 8</a>
+          <a href="Keersommen_tafel_9.html" class="game-button active">Tafel 9</a>
+          <a href="Keersommen_tafel_10.html" class="game-button active">Tafel 10</a>
+          
+          <h4>Tafels 11-12</h4>
+          <a href="Keersommen_tafel_11.html" class="game-button active">Tafel 11</a>
+          <a href="Keersommen_tafel_12.html" class="game-button active">Tafel 12</a>
+          
+          <h4>Gemixt</h4>
+          <a href="Keersommen_tafels_1_2_5_10_gemixt.html" class="game-button active">Tafels 1,2,5,10</a>
+          <a href="Keersommen_alle_tafels_1-10_gemixt.html" class="game-button active">Tafels 1-10</a>
+          <a href="Keersommen_alle_tafels_1-12_gemixt.html" class="game-button active">Tafels 1-12</a>
         </div>
       </div>
 
-      <!-- Groep 6 -->
-      <div class="groep">
-        <h2>Groep 6</h2>
+      <!-- Deelsommen -->
+      <div class="onderwerp">
+        <h2>Deelsommen</h2>
         <div class="games">
-          <h4>Tafeltjes</h4>
-          <a href="Keersommen_tafel_11.html" class="game-button active">Keersommen Tafel 11</a>
-          <a href="Keersommen_tafel_12.html" class="game-button active">Keersommen Tafel 12</a>
-          <a href="Keersommen_alle_tafels_1-12_gemixt.html" class="game-button active">Keersommen Gemixt (1-12)</a>
+          <h4>Gemixt</h4>
+          <a href="Deelsommen_tafels_1-10_gemixt.html" class="game-button active">Tafels 1-10</a>
         </div>
       </div>
 
-      <!-- Groep 7 -->
-      <div class="groep">
-        <h2>Groep 7</h2>
+      <!-- Klokken -->
+      <div class="onderwerp">
+        <h2>Klokken</h2>
+        <div class="games">
+          <h4>Analoog</h4>
+          <a href="klokkijken_hele_uren.html" class="game-button active">Hele uren</a>
+          <a href="klokkijken_halve_uren.html" class="game-button active">Halve uren</a>
+          <a href="klokkijken_oefenen.html" class="game-button active">Kwart voor/over</a>
+          <a href="klokkijken_5_10_minuten.html" class="game-button active">5/10 minuten</a>
+          
+          <h4>Digitaal</h4>
+          <a href="klokkijken_digitaal.html" class="game-button active">Digitale klok</a>
+          <a href="klokkijken_expert.html" class="game-button active">Vul de zin in</a>
+        </div>
+      </div>
+
+      <!-- Meten -->
+      <div class="onderwerp">
+        <h2>Meten</h2>
         <div class="games">
           <a class="game-button disabled">Binnenkort beschikbaar</a>
         </div>
       </div>
 
-      <!-- Groep 8 -->
-      <div class="groep">
-        <h2>Groep 8</h2>
+      <!-- Verhaaltjessommen -->
+      <div class="onderwerp">
+        <h2>Verhaaltjessommen</h2>
         <div class="games">
           <a class="game-button disabled">Binnenkort beschikbaar</a>
         </div>
