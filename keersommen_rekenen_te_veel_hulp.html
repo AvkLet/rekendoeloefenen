@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rekenen met te veel (Met hulpsommen)</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(45deg, #f9c784, #fc5c7d, #6a3093, #a044ff);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .home-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1.1em;
+            border-radius: 25px;
+            cursor: pointer;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            z-index: 1000;
+        }
+        .home-button:hover { transform: translateY(-2px); box-shadow: 0 7px 20px rgba(0,0,0,0.4); }
+
+        /* Stoplicht */
+        .stoplicht-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+        }
+        .stoplicht {
+            width: 60px;
+            height: 130px;
+            background: #333;
+            border-radius: 20px;
+            padding: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+        .licht {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #444;
+            border: 2px solid #666;
+        }
+        .licht.rood-aan   { background: #ff4444; box-shadow: 0 0 15px #ff4444; }
+        .licht.oranje-aan { background: #ffaa44; box-shadow: 0 0 15px #ffaa44; }
+        .licht.groen-aan  { background: #44ff44; box-shadow: 0 0 15px #44ff44; }
+
+        /* Hoofd layout: voorbeeld links + container rechts */
+        .pagina-wrapper {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        /* Voorbeeldpaneel */
+        .voorbeeld-paneel {
+            display: none;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 24px 20px;
+            width: 300px;
+            min-width: 280px;
+            flex-shrink: 0;
+            animation: inschuiven 0.3s ease-out;
+        }
+        .voorbeeld-paneel.zichtbaar { display: block; }
+
+        @keyframes inschuiven {
+            from { opacity: 0; transform: translateX(-20px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+
+        .voorbeeld-titel {
+            color: #764ba2;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 14px;
+            text-align: center;
+        }
+
+        /* Voorbeeld uitwerking: zelfde grid-aanpak maar kleiner */
+        .vb-stap {
+            display: grid;
+            grid-template-columns: auto auto auto auto auto;
+            align-items: center;
+            justify-content: start;
+            gap: 6px;
+            font-size: 1.05em;
+            font-weight: bold;
+            color: #333;
+            margin: 6px 0;
+            white-space: nowrap;
+        }
+        .vb-antwoord {
+            background: #eef0ff;
+            border: 2px solid #667eea;
+            border-radius: 6px;
+            padding: 2px 10px;
+            color: #333;
+            font-weight: bold;
+            text-align: center;
+        }
+        .vb-leg {
+            font-size: 0.85em;
+            color: #888;
+            margin-top: 12px;
+            line-height: 1.5;
+        }
+
+        /* Hoofdcontainer */
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 30px;
+            text-align: center;
+            width: 640px;
+            max-width: 95vw;
+            animation: bounce 0.5s ease-out;
+            flex-shrink: 0;
+        }
+        @keyframes bounce {
+            0%   { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1);   opacity: 1; }
+        }
+
+        .title {
+            color: #fc5c7d;
+            font-size: 2em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        .instructie {
+            font-size: 1.1em;
+            color: #555;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        /* Hulpknop */
+        .hulp-rij {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 4px;
+        }
+        .hulp-knop {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            font-family: Georgia, serif;
+            font-style: italic;
+            box-shadow: 0 2px 8px rgba(102,126,234,0.3);
+        }
+        .hulp-knop:hover { background: #667eea; color: white; }
+        .hulp-knop.actief { background: #667eea; color: white; }
+
+        /* Hoofdsom */
+        .som-hoofd {
+            font-size: 2.4em;
+            font-weight: bold;
+            color: #fc5c7d;
+            margin: 6px 0 12px 0;
+        }
+
+        /* Strategie-box: transparant, alleen blauwe rand */
+        .strategie-box {
+            border: 2px solid #667eea;
+            border-radius: 15px;
+            padding: 20px 16px;
+            margin: 0 0 12px 0;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /*
+         * Elke rij als CSS grid met vaste kolommen zodat alles netjes uitlijnt.
+         * Kolommen: [linker deel] [=] [middenlinks] [operator] [middenrechts]
+         * Breedte van elke kolom wordt bepaald door de breedste inhoud.
+         * We gebruiken een wrapper met display:table zodat kolommen meegroeien.
+         */
+        .stap-tabel {
+            display: inline-grid;
+            grid-template-columns:
+                max-content   /* col A: "a × b" of phantom */
+                max-content   /* col B: "=" */
+                max-content   /* col C: linker waarde / invoer */
+                max-content   /* col D: operator (− of leeg) */
+                max-content;  /* col E: rechter waarde / invoer */
+            align-items: center;
+            justify-items: center;
+            column-gap: 10px;
+            row-gap: 10px;
+        }
+
+        /* phantom: onzichtbaar maar neemt ruimte in */
+        .phantom { visibility: hidden; }
+
+        .stap-vak {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            min-width: 80px;
+            height: 44px;
+            background: transparent;
+        }
+        .stap-vak.correct { border-color: #44bb44; background: rgba(80,210,80,0.15); }
+        .stap-vak.fout    { border-color: #ffaa33; background: rgba(255,160,50,0.15); }
+
+        .stap-vak input {
+            background: transparent;
+            border: none;
+            outline: none;
+            font-size: 0.95em;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            font-weight: bold;
+            color: #333;
+            width: 76px;
+            text-align: center;
+            -moz-appearance: textfield;
+        }
+        .stap-vak input::-webkit-outer-spin-button,
+        .stap-vak input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .stap-vak input::placeholder { color: transparent; }
+
+        .feedback {
+            font-size: 1.2em;
+            font-weight: bold;
+            min-height: 26px;
+            margin: 8px 0;
+            color: #333;
+        }
+
+        .knop-rij {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+        .button {
+            padding: 13px 30px;
+            font-size: 1.15em;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.25);
+            transition: all 0.3s;
+        }
+        .button:hover { transform: translateY(-2px); box-shadow: 0 7px 20px rgba(0,0,0,0.3); }
+        .btn-check { background: linear-gradient(45deg, #56ab2f, #a8e063); color: white; }
+        .btn-next  { background: linear-gradient(45deg, #667eea, #764ba2); color: white; display: none; }
+
+        /* Resultaten */
+        .resultaten {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 15px 20px;
+            margin: 15px 0;
+            text-align: left;
+            max-height: 360px;
+            overflow-y: auto;
+        }
+        .resultaat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 4px;
+            border-bottom: 1px solid #dee2e6;
+            font-size: 1.05em;
+        }
+        .resultaat-item:last-child { border-bottom: none; }
+        .correct-res { color: #28a745; }
+        .half-res    { color: #e6a817; }
+        .fout-res    { color: #e67e22; }
+
+        .score-summary {
+            background: linear-gradient(135deg, #fc5c7d, #6a3093);
+            color: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .score-summary h3 { margin-top: 0; }
+        .score-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 12px;
+        }
+        .score-item {
+            background: rgba(255,255,255,0.2);
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .score-item .groot { font-size: 2.2em; font-weight: bold; }
+
+        #startScreen   { display: block; }
+        #gameScreen    { display: none; }
+        #resultsScreen { display: none; }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="home-button">&#127968; Home</a>
+
+    <div class="stoplicht-container">
+        <div class="stoplicht">
+            <div class="licht" id="roodLicht"></div>
+            <div class="licht" id="oranjeLicht"></div>
+            <div class="licht groen-aan" id="groenLicht"></div>
+        </div>
+    </div>
+
+    <div class="pagina-wrapper">
+
+        <!-- VOORBEELDPANEEL (links) -->
+        <div class="voorbeeld-paneel" id="voorbeeldPaneel">
+            <div class="voorbeeld-titel">&#128161; Zo doe je het!</div>
+            <!-- Uitgewerkt voorbeeld: 5 × 28 -->
+            <div class="vb-stap">
+                <span>5 &times; 28</span>
+                <span>=</span>
+                <span>5 &times; 30</span>
+                <span>&minus;</span>
+                <span>5 &times; 2</span>
+            </div>
+            <div class="vb-stap">
+                <span class="phantom">5 &times; 28</span>
+                <span>=</span>
+                <span class="vb-antwoord">150</span>
+                <span>&minus;</span>
+                <span class="vb-antwoord">10</span>
+            </div>
+            <div class="vb-stap">
+                <span class="phantom">5 &times; 28</span>
+                <span>=</span>
+                <span class="vb-antwoord">140</span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="vb-leg">
+                Stap 1: rond het getal op naar het volgende tiental: 28 wordt 30.<br>
+                Dat is 2 te veel &rarr; 5 &times; 2 = 10 te veel.<br>
+                Stap 2: 5 &times; 30 = 150<br>
+                Stap 3: 150 &minus; 10 = <strong>140</strong> &#10004;
+            </div>
+        </div>
+
+        <!-- HOOFDCONTAINER -->
+        <div class="container">
+
+            <!-- STARTSCHERM -->
+            <div id="startScreen">
+                <div class="title">&#10006;&#65038; Rekenen met t&eacute; veel</div>
+                <div class="instructie">
+                    Bereken keersommen door slim te rekenen met <strong>t&eacute; veel</strong>!<br>
+                    Rond het tweede getal omhoog naar het volgende tiental<br>
+                    en trek daarna het t&eacute; veel berekende deel er weer vanaf.<br><br>
+                    <em>Voorbeeld: 5 &times; 28 = 5 &times; 30 &minus; 5 &times; 2 = 150 &minus; 10 = <strong>140</strong></em><br><br>
+                    Je maakt <strong>10 sommen</strong>.
+                </div>
+                <button class="button btn-check" onclick="startSpel()">&#9654; Start!</button>
+            </div>
+
+            <!-- SPELSCHERM -->
+            <div id="gameScreen">
+                <div class="hulp-rij">
+                    <button class="hulp-knop" id="hulpKnop" onclick="toggleVoorbeeld()" title="Bekijk een voorbeeld">i</button>
+                </div>
+
+                <div class="som-hoofd" id="somHoofd"></div>
+
+                <div class="strategie-box">
+                    <div class="stap-tabel" id="stapTabel"></div>
+                </div>
+
+                <div class="feedback" id="feedbackTekst"></div>
+
+                <div class="knop-rij">
+                    <button class="button btn-check" id="btnControleer" onclick="controleer()">&#10004; Controleer</button>
+                    <button class="button btn-next"  id="btnVolgende"  onclick="volgendeSom()">&#10145; Volgende som</button>
+                </div>
+            </div>
+
+            <!-- RESULTAATSCHERM -->
+            <div id="resultsScreen">
+                <div class="title">Klaar! &#127881;</div>
+                <div class="score-summary">
+                    <h3>Jouw resultaat</h3>
+                    <div class="score-grid">
+                        <div class="score-item">
+                            <div>Eindantwoord goed</div>
+                            <div class="groot"><span id="resGoed">0</span> / 10</div>
+                        </div>
+                        <div class="score-item">
+                            <div>Alle stappen goed</div>
+                            <div class="groot"><span id="resAlles">0</span> / 10</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="resultaten" id="resultatenLijst"></div>
+                <button class="button btn-check" onclick="opnieuw()">&#128260; Opnieuw</button>
+            </div>
+
+        </div><!-- /container -->
+    </div><!-- /pagina-wrapper -->
+
+    <script>
+        const TOTAAL = 10;
+        const HELFT  = Math.ceil(TOTAAL / 2);
+        let sommen     = [];
+        let huidigeSom = null;
+        let somIndex   = 0;
+        let voorbeeldOpen = false;
+
+        function toggleVoorbeeld() {
+            voorbeeldOpen = !voorbeeldOpen;
+            document.getElementById('voorbeeldPaneel').classList.toggle('zichtbaar', voorbeeldOpen);
+            document.getElementById('hulpKnop').classList.toggle('actief', voorbeeldOpen);
+        }
+
+        function genereerSom() {
+            let a, b, afronding, teveel;
+            do {
+                a = Math.floor(Math.random() * 9) + 1;
+                const eenheid = [7, 8, 9][Math.floor(Math.random() * 3)];
+                const tiental = Math.floor(Math.random() * 9) + 1;
+                b = tiental * 10 + eenheid;
+                afronding = b - eenheid + 10;
+                teveel    = afronding - b;
+            } while (teveel === 0);
+            return { a, b, afronding, teveel,
+                stap1a:   a * afronding,
+                stap1b:   a * teveel,
+                antwoord: a * b };
+        }
+
+        function startSpel() {
+            document.getElementById('startScreen').style.display   = 'none';
+            document.getElementById('gameScreen').style.display    = 'block';
+            document.getElementById('resultsScreen').style.display = 'none';
+            sommen   = [];
+            somIndex = 0;
+            zetStoplicht('groen');
+            laadSom();
+        }
+
+        function zetStoplicht(kleur) {
+            document.getElementById('roodLicht').className   = 'licht' + (kleur === 'rood'   ? ' rood-aan'   : '');
+            document.getElementById('oranjeLicht').className = 'licht' + (kleur === 'oranje' ? ' oranje-aan' : '');
+            document.getElementById('groenLicht').className  = 'licht' + (kleur === 'groen'  ? ' groen-aan'  : '');
+        }
+
+        function updateStoplicht() {
+            if (somIndex + 1 <= HELFT) zetStoplicht('groen');
+            else zetStoplicht('oranje');
+        }
+
+        function laadSom() {
+            huidigeSom = genereerSom();
+            const { a, b, afronding, teveel } = huidigeSom;
+
+            document.getElementById('somHoofd').textContent        = a + ' \u00d7 ' + b + ' = ?';
+            document.getElementById('feedbackTekst').textContent   = '';
+            document.getElementById('btnControleer').style.display = 'inline-block';
+            document.getElementById('btnVolgende').style.display   = 'none';
+            document.getElementById('btnVolgende').textContent     =
+                somIndex + 1 >= TOTAAL ? '\uD83D\uDCCA Bekijk resultaat' : '\u27A1 Volgende som';
+
+            updateStoplicht();
+
+            /*
+             * Grid: 5 kolommen
+             *  A         B    C          D      E
+             * "a × b"  "="  linkswaarde  "−"  rechtswaarde
+             *
+             * Rij 1 (uitleg):  a×b  =  a×afronding  −  a×teveel
+             * Rij 2 (invul):  phantom  =  [vak1a]  −  [vak1b]
+             * Rij 3 (invul):  phantom  =  [vakEind]  (leeg)  (leeg)
+             */
+            document.getElementById('stapTabel').innerHTML = `
+                <!-- Rij 1: uitleg -->
+                <span>${a}&nbsp;\u00d7&nbsp;${b}</span>
+                <span>=</span>
+                <span>${a}&nbsp;\u00d7&nbsp;${afronding}</span>
+                <span>&minus;</span>
+                <span>${a}&nbsp;\u00d7&nbsp;${teveel}</span>
+
+                <!-- Rij 2: twee invulvakken -->
+                <span class="phantom">${a}&nbsp;\u00d7&nbsp;${b}</span>
+                <span>=</span>
+                <span class="stap-vak" id="vak1a"><input type="number" id="inp1a" autocomplete="off" inputmode="numeric"></span>
+                <span>&minus;</span>
+                <span class="stap-vak" id="vak1b"><input type="number" id="inp1b" autocomplete="off" inputmode="numeric"></span>
+
+                <!-- Rij 3: eindantwoord -->
+                <span class="phantom">${a}&nbsp;\u00d7&nbsp;${b}</span>
+                <span>=</span>
+                <span class="stap-vak" id="vakEind"><input type="number" id="inpEind" autocomplete="off" inputmode="numeric"></span>
+                <span></span>
+                <span></span>
+            `;
+
+            ['inp1a','inp1b','inpEind'].forEach(id => {
+                document.getElementById(id).addEventListener('keydown', e => {
+                    if (e.key === 'Enter') controleer();
+                });
+            });
+
+            setTimeout(() => document.getElementById('inp1a').focus(), 50);
+        }
+
+        function controleer() {
+            const { stap1a, stap1b, antwoord } = huidigeSom;
+            const w1a  = parseInt(document.getElementById('inp1a').value);
+            const w1b  = parseInt(document.getElementById('inp1b').value);
+            const wEnd = parseInt(document.getElementById('inpEind').value);
+
+            const ok1a  = w1a  === stap1a;
+            const ok1b  = w1b  === stap1b;
+            const okEnd = wEnd === antwoord;
+            const alleGoed = ok1a && ok1b && okEnd;
+
+            function kleurVak(vakId, inpId, ok, juist) {
+                document.getElementById(vakId).classList.add(ok ? 'correct' : 'fout');
+                const el = document.getElementById(inpId);
+                el.value    = juist;
+                el.disabled = true;
+            }
+            kleurVak('vak1a',  'inp1a',  ok1a,  stap1a);
+            kleurVak('vak1b',  'inp1b',  ok1b,  stap1b);
+            kleurVak('vakEind','inpEind',okEnd, antwoord);
+
+            document.getElementById('feedbackTekst').textContent =
+                alleGoed ? '\u2B50 Helemaal goed!' : '\uD83D\uDD0E Kijk hierboven wat de juiste antwoorden waren.';
+
+            sommen.push({ label: huidigeSom.a + ' \u00d7 ' + huidigeSom.b, antwoord, alleGoed, okEnd });
+
+            document.getElementById('btnControleer').style.display = 'none';
+            document.getElementById('btnVolgende').textContent =
+                somIndex + 1 >= TOTAAL ? '\uD83D\uDCCA Bekijk resultaat' : '\u27A1 Volgende som';
+            document.getElementById('btnVolgende').style.display = 'inline-block';
+        }
+
+        function volgendeSom() {
+            somIndex++;
+            if (somIndex >= TOTAAL) toonResultaten();
+            else laadSom();
+        }
+
+        function toonResultaten() {
+            zetStoplicht('rood');
+            // sluit voorbeeldpaneel
+            voorbeeldOpen = false;
+            document.getElementById('voorbeeldPaneel').classList.remove('zichtbaar');
+            document.getElementById('gameScreen').style.display    = 'none';
+            document.getElementById('resultsScreen').style.display = 'block';
+
+            document.getElementById('resGoed').textContent  = sommen.filter(s => s.okEnd).length;
+            document.getElementById('resAlles').textContent = sommen.filter(s => s.alleGoed).length;
+
+            const lijst = document.getElementById('resultatenLijst');
+            lijst.innerHTML = '';
+            sommen.forEach((s, i) => {
+                const div = document.createElement('div');
+                div.className = 'resultaat-item';
+                const klasse = s.alleGoed ? 'correct-res' : s.okEnd ? 'half-res' : 'fout-res';
+                const tekst  = s.alleGoed ? '\u2705 Alles goed' : s.okEnd ? '\uD83D\uDFE1 Eindantwoord goed' : '\uD83D\uDD36 Fout';
+                div.innerHTML = `<span>Som ${i+1}: ${s.label} = ${s.antwoord}</span><span class="${klasse}">${tekst}</span>`;
+                lijst.appendChild(div);
+            });
+        }
+
+        function opnieuw() {
+            document.getElementById('resultsScreen').style.display = 'none';
+            document.getElementById('startScreen').style.display   = 'block';
+            zetStoplicht('groen');
+        }
+    </script>
+</body>
+</html>
