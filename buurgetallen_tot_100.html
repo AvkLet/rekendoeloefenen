@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buurgetallen tot 100</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(45deg, #f6d365, #fda085, #f093fb, #f5576c);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .home-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1.1em;
+            border-radius: 25px;
+            cursor: pointer;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            z-index: 1000;
+        }
+        .home-button:hover { transform: translateY(-2px); box-shadow: 0 7px 20px rgba(0,0,0,0.4); }
+
+        .stoplicht-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        .stoplicht {
+            width: 60px;
+            height: 130px;
+            background: #333;
+            border-radius: 20px;
+            padding: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+        .licht {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #444;
+            border: 2px solid #666;
+        }
+        .licht.rood-aan   { background: #ff4444; box-shadow: 0 0 15px #ff4444; }
+        .licht.oranje-aan { background: #ffaa44; box-shadow: 0 0 15px #ffaa44; }
+        .licht.groen-aan  { background: #44ff44; box-shadow: 0 0 15px #44ff44; }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 40px;
+            text-align: center;
+            max-width: 600px;
+            width: 90%;
+            animation: bounce 0.5s ease-out;
+        }
+        @keyframes bounce {
+            0%   { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1);   opacity: 1; }
+        }
+
+        .title {
+            color: #f5576c;
+            font-size: 2.2em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        .instructie {
+            font-size: 1.2em;
+            color: #333;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        /* Drie vakjes */
+        .vakjes-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin: 40px 0;
+        }
+
+        .vakje {
+            width: 110px;
+            height: 110px;
+            border: 4px solid #667eea;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2em;
+            font-weight: bold;
+            background: white;
+            position: relative;
+        }
+
+        .vakje.gevuld {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-color: #764ba2;
+        }
+
+        .vakje input {
+            width: 85px;
+            height: 65px;
+            font-size: 1.4em;
+            text-align: center;
+            border: none;
+            background: transparent;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            font-weight: bold;
+            color: #333;
+            -moz-appearance: textfield;
+        }
+        .vakje input::-webkit-outer-spin-button,
+        .vakje input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .vakje input:focus { outline: none; background: #f0f8ff; border-radius: 8px; }
+
+        .vakje.correct   { background: #d4edda; border-color: #28a745; }
+        .vakje.incorrect { background: #fff3cd; border-color: #ff9800; }
+
+        .correct-answer {
+            position: absolute;
+            bottom: -28px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #28a745;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 8px;
+            font-size: 0.65em;
+            white-space: nowrap;
+        }
+
+        .feedback {
+            font-size: 1.4em;
+            margin: 20px 0;
+            font-weight: bold;
+            min-height: 36px;
+        }
+
+        .button {
+            background: linear-gradient(45deg, #f5576c, #fda085);
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            font-size: 1.2em;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 10px;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+        .button:hover  { transform: translateY(-2px); box-shadow: 0 7px 20px rgba(0,0,0,0.3); }
+        .button:active { transform: translateY(0); }
+        .button:disabled { background: #ccc; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+
+        /* Resultaten */
+        .score-summary {
+            background: linear-gradient(135deg, #f5576c, #764ba2);
+            color: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .score-summary h3 { margin-top: 0; }
+        .score-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .score-item {
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.4em;
+            font-weight: bold;
+        }
+        .score-item div:first-child { font-size: 0.65em; margin-bottom: 5px; }
+
+        .resultaten {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 15px 20px;
+            margin: 15px 0;
+            text-align: left;
+            max-height: 350px;
+            overflow-y: auto;
+        }
+        .resultaat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 4px;
+            border-bottom: 1px solid #dee2e6;
+            font-size: 1em;
+        }
+        .resultaat-item:last-child { border-bottom: none; }
+        .correct-res { color: #28a745; }
+        .fout-res    { color: #e67e22; }
+
+        #startScreen   { display: block; }
+        #gameScreen    { display: none;  }
+        #resultsScreen { display: none;  }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="home-button">&#127968; Home</a>
+
+    <div class="stoplicht-container">
+        <div class="stoplicht">
+            <div class="licht" id="roodLicht"></div>
+            <div class="licht" id="oranjeLicht"></div>
+            <div class="licht groen-aan" id="groenLicht"></div>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <!-- STARTSCHERM -->
+        <div id="startScreen">
+            <div class="title">Buurgetallen</div>
+            <div class="instructie">
+                Vul de buurgetallen in!<br>
+                Het middelste getal staat al. Wat zijn de getallen links en rechts?<br><br>
+                Je maakt <strong>20 opdrachten</strong>.
+            </div>
+            <button class="button" onclick="startOefening()">&#9654; Start!</button>
+        </div>
+
+        <!-- SPELSCHERM -->
+        <div id="gameScreen">
+            <div class="vakjes-container" id="vakjesContainer"></div>
+            <div class="feedback" id="feedback"></div>
+            <button class="button" id="volgendeBtn" onclick="volgendeSom()">&#10004; Controleer</button>
+        </div>
+
+        <!-- RESULTAATSCHERM -->
+        <div id="resultsScreen">
+            <div class="title">Klaar! &#127881;</div>
+            <div class="score-summary">
+                <h3>Jouw resultaat</h3>
+                <div class="score-grid">
+                    <div class="score-item">
+                        <div>Goed</div>
+                        <span id="goedTotaal">0</span> / 20
+                    </div>
+                </div>
+            </div>
+            <div class="resultaten" id="resultatenLijst"></div>
+            <button class="button" onclick="opnieuwBeginnen()">&#128260; Opnieuw</button>
+        </div>
+
+    </div>
+
+    <script>
+        const TOTAAL = 20;
+        const HELFT  = Math.ceil(TOTAAL / 2);
+
+        let middenGetal = 0;
+        let huidigeSomIndex = 0;
+        let sommen = [];
+
+        function zetStoplicht(kleur) {
+            document.getElementById('roodLicht').className   = 'licht' + (kleur === 'rood'   ? ' rood-aan'   : '');
+            document.getElementById('oranjeLicht').className = 'licht' + (kleur === 'oranje' ? ' oranje-aan' : '');
+            document.getElementById('groenLicht').className  = 'licht' + (kleur === 'groen'  ? ' groen-aan'  : '');
+        }
+
+        function updateStoplicht() {
+            const nr = huidigeSomIndex + 1;
+            if (nr <= HELFT) zetStoplicht('groen');
+            else zetStoplicht('oranje');
+        }
+
+        function startOefening() {
+            document.getElementById('startScreen').style.display   = 'none';
+            document.getElementById('gameScreen').style.display    = 'block';
+            document.getElementById('resultsScreen').style.display = 'none';
+            huidigeSomIndex = 0;
+            sommen = [];
+            zetStoplicht('groen');
+            nieuweOpgave();
+        }
+
+        function nieuweOpgave() {
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('volgendeBtn').textContent = '\u2714 Controleer';
+            document.getElementById('volgendeBtn').disabled = false;
+
+            // Willekeurig getal van 2 t/m 99 (zodat er altijd een buurgetal links en rechts is)
+            middenGetal = Math.floor(Math.random() * 98) + 2;
+
+            updateStoplicht();
+
+            const container = document.getElementById('vakjesContainer');
+            container.innerHTML = '';
+
+            // Vakje links (leeg)
+            const vakjeLinks = document.createElement('div');
+            vakjeLinks.className = 'vakje';
+            const inputLinks = document.createElement('input');
+            inputLinks.type = 'number';
+            inputLinks.id = 'vakjeLinks';
+            vakjeLinks.appendChild(inputLinks);
+            container.appendChild(vakjeLinks);
+
+            // Vakje midden (gevuld)
+            const vakjeMidden = document.createElement('div');
+            vakjeMidden.className = 'vakje gevuld';
+            vakjeMidden.textContent = middenGetal;
+            container.appendChild(vakjeMidden);
+
+            // Vakje rechts (leeg)
+            const vakjeRechts = document.createElement('div');
+            vakjeRechts.className = 'vakje';
+            const inputRechts = document.createElement('input');
+            inputRechts.type = 'number';
+            inputRechts.id = 'vakjeRechts';
+            vakjeRechts.appendChild(inputRechts);
+            container.appendChild(vakjeRechts);
+
+            // Enter → controleer
+            [inputLinks, inputRechts].forEach(inp => {
+                inp.addEventListener('keydown', e => {
+                    if (e.key === 'Enter') {
+                        const btn = document.getElementById('volgendeBtn');
+                        if (!btn.disabled) volgendeSom();
+                    }
+                });
+            });
+
+            setTimeout(() => inputLinks.focus(), 50);
+        }
+
+        function volgendeSom() {
+            const wLinksRaw  = document.getElementById('vakjeLinks').value;
+            const wRechtsRaw = document.getElementById('vakjeRechts').value;
+
+            if (wLinksRaw === '' && wRechtsRaw === '') {
+                const feedback = document.getElementById('feedback');
+                feedback.textContent = 'Niks ingevuld!';
+                feedback.style.color = '#e67e22';
+                return;
+            }
+
+            const wLinks  = parseInt(wLinksRaw);
+            const wRechts = parseInt(wRechtsRaw);
+
+            const okLinks  = wLinks  === middenGetal - 1;
+            const okRechts = wRechts === middenGetal + 1;
+            const alleGoed = okLinks && okRechts;
+
+            // Kleur vakje links
+            const vakjes = document.querySelectorAll('.vakje');
+            const vakjeLinks  = vakjes[0];
+            const vakjeRechts = vakjes[2];
+
+            vakjeLinks.classList.remove('correct','incorrect');
+            vakjeRechts.classList.remove('correct','incorrect');
+            // Verwijder oude labels
+            vakjeLinks.querySelectorAll('.correct-answer').forEach(el => el.remove());
+            vakjeRechts.querySelectorAll('.correct-answer').forEach(el => el.remove());
+
+            if (okLinks) {
+                vakjeLinks.classList.add('correct');
+            } else {
+                vakjeLinks.classList.add('incorrect');
+                const label = document.createElement('div');
+                label.className = 'correct-answer';
+                label.textContent = middenGetal - 1;
+                vakjeLinks.appendChild(label);
+            }
+
+            if (okRechts) {
+                vakjeRechts.classList.add('correct');
+            } else {
+                vakjeRechts.classList.add('incorrect');
+                const label = document.createElement('div');
+                label.className = 'correct-answer';
+                label.textContent = middenGetal + 1;
+                vakjeRechts.appendChild(label);
+            }
+
+            // Inputs uitzetten
+            document.getElementById('vakjeLinks').disabled  = true;
+            document.getElementById('vakjeRechts').disabled = true;
+
+            const feedback = document.getElementById('feedback');
+            feedback.textContent = alleGoed ? '\u2B50 Goed!' : '\uD83D\uDD0E Kijk wat het juiste antwoord was.';
+
+            sommen.push({
+                midden: middenGetal,
+                juistLinks:  middenGetal - 1,
+                juistRechts: middenGetal + 1,
+                wLinks, wRechts,
+                alleGoed
+            });
+
+            document.getElementById('volgendeBtn').disabled = true;
+
+            const wachtTijd = alleGoed ? 800 : 1800;
+            setTimeout(() => {
+                huidigeSomIndex++;
+                if (huidigeSomIndex >= TOTAAL) {
+                    toonResultaten();
+                } else {
+                    nieuweOpgave();
+                }
+            }, wachtTijd);
+        }
+
+        function toonResultaten() {
+            zetStoplicht('rood');
+            document.getElementById('gameScreen').style.display    = 'none';
+            document.getElementById('resultsScreen').style.display = 'block';
+
+            const goed = sommen.filter(s => s.alleGoed).length;
+            document.getElementById('goedTotaal').textContent = goed;
+
+            const lijst = document.getElementById('resultatenLijst');
+            lijst.innerHTML = '';
+            sommen.forEach((s, i) => {
+                const div = document.createElement('div');
+                div.className = 'resultaat-item';
+                const klasse = s.alleGoed ? 'correct-res' : 'fout-res';
+                const icoon  = s.alleGoed ? '\u2705' : '\uD83D\uDD36';
+                const verbetering = !s.alleGoed
+                    ? ` &rarr; ${s.juistLinks} &ndash; <strong>${s.midden}</strong> &ndash; ${s.juistRechts}`
+                    : '';
+                div.innerHTML = `
+                    <span>Opdracht ${i+1}: <strong>${s.midden}</strong>${verbetering}</span>
+                    <span class="${klasse}">${icoon}</span>
+                `;
+                lijst.appendChild(div);
+            });
+        }
+
+        function opnieuwBeginnen() {
+            document.getElementById('resultsScreen').style.display = 'none';
+            document.getElementById('startScreen').style.display   = 'block';
+            zetStoplicht('groen');
+        }
+    </script>
+</body>
+</html>
