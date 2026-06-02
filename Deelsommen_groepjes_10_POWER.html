@@ -136,7 +136,7 @@
         .speelveld {
             position: relative;
             width: 100%;
-            height: 260px;
+            height: 340px;
             border: 2px solid #667eea;
             border-radius: 15px;
             background: #f8f0ff;
@@ -508,7 +508,7 @@
                     y  = pad + r + Math.random() * (veldH - 2 * r - 2 * pad);
                     ok = posities.every(p => Math.hypot(p.x - x, p.y - y) > r * 2.4);
                     pogingen++;
-                } while (!ok && pogingen < 3000);
+                } while (!ok && pogingen < 8000);
                 posities.push({ x, y });
 
                 const bol = document.createElement('div');
