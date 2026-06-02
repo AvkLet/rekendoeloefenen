@@ -506,7 +506,7 @@
                 do {
                     x  = pad + r + Math.random() * (veldW - 2 * r - 2 * pad);
                     y  = pad + r + Math.random() * (veldH - 2 * r - 2 * pad);
-                    ok = posities.every(p => Math.hypot(p.x - x, p.y - y) > r * 2.4);
+                    ok = posities.every(p => Math.hypot(p.x - x, p.y - y) > r * 2.8);
                     pogingen++;
                 } while (!ok && pogingen < 8000);
                 posities.push({ x, y });
