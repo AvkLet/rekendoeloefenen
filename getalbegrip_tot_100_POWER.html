@@ -211,10 +211,8 @@
                 // Reeks van 5 getallen, stap -10, beginwaarde zodat alles tussen 0-100 valt
                 // Grootste waarde max 100, kleinste min 10 (zodat alle 5 passen)
                 // reeks[4] >= 10 (want 4 stappen van 10 terug)
-                let anker = Math.floor(Math.random() * 5); // welk vakje is gevuld (0-4)
-                let laagste = 10 + Math.floor(Math.random() * 51); // 10..60 zodat + 40 <= 100
-                // Zorg dat laagste deelbaar is door 10 of willekeurig getal
-                // Gewoon willekeurig getal 10-60
+                let anker = 4; // vast rechts
+                let laagste = 10 + Math.floor(Math.random() * 51);
                 let reeks = [];
                 for (let i = 0; i < 5; i++) reeks.push(laagste + i * 10);
                 return {
@@ -223,7 +221,7 @@
                 };
             }
             if (type === 'spring10verder') {
-                let anker = Math.floor(Math.random() * 5);
+                let anker = 0; // vast links
                 let laagste = Math.floor(Math.random() * 51); // 0..50 zodat +40 <= 90
                 let reeks = [];
                 for (let i = 4; i >= 0; i--) reeks.push(laagste + i * 10);
@@ -249,10 +247,8 @@
                 };
             }
             if (type === 'min1') {
-                let anker = Math.floor(Math.random() * 5);
-                let start = 2 + Math.floor(Math.random() * 95); // 2..96 zodat -4 >= 0 en start <= 100
-                // Zorg dat start - 4 >= 0
-                start = Math.max(4, Math.min(start, 99));
+                let anker = 4; // vast rechts: reeks daalt, beginwaarde links
+                let start = Math.max(4, Math.min(2 + Math.floor(Math.random() * 95), 99));
                 let reeks = [];
                 for (let i = 0; i < 5; i++) reeks.push(start - i);
                 return {
@@ -261,8 +257,8 @@
                 };
             }
             if (type === 'plus1') {
-                let anker = Math.floor(Math.random() * 5);
-                let start = Math.floor(Math.random() * 95); // 0..94 zodat +4 <= 98
+                let anker = 0; // vast links: reeks stijgt, beginwaarde links
+                let start = Math.floor(Math.random() * 95);
                 let reeks = [];
                 for (let i = 0; i < 5; i++) reeks.push(start + i);
                 return {
