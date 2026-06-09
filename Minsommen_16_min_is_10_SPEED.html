@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>16 - ... = 10 - SPEED</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(45deg, #ffecd2, #fcb69f);
+            margin: 0; padding: 20px; min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .home-button {
+            position: fixed; top: 20px; left: 20px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white; border: none; padding: 12px 24px; font-size: 1.1em;
+            border-radius: 25px; cursor: pointer;
+            font-family: 'Comic Sans MS', cursive, sans-serif; font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); transition: all 0.3s;
+            text-decoration: none; display: inline-block; z-index: 1000;
+        }
+        .home-button:hover { transform: translateY(-2px); box-shadow: 0 7px 20px rgba(0,0,0,0.4); }
+        .stoplicht-container { position: fixed; top: 20px; right: 20px; z-index: 1000; }
+        .stoplicht {
+            width: 80px; height: 160px; background: #333; border-radius: 30px;
+            padding: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 10px;
+        }
+        .licht { width: 40px; height: 40px; border-radius: 50%; background: #444; border: 2px solid #666; }
+        .licht.rood-aan   { background: #ff4444; box-shadow: 0 0 15px #ff4444; }
+        .licht.oranje-aan { background: #ffaa44; box-shadow: 0 0 15px #ffaa44; }
+        .licht.groen-aan  { background: #44ff44; box-shadow: 0 0 15px #44ff44; }
+        .container {
+            background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 30px; text-align: center; max-width: 500px; width: 90%;
+            animation: bounce 0.5s ease-out;
+        }
+        @keyframes bounce { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .title { color: #ff6b6b; font-size: 2.2em; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
+        .instructie { font-size: 1.2em; color: #333; margin-bottom: 30px; }
+        .som-container {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white; border-radius: 15px; padding: 30px; margin: 20px 0;
+            font-size: 3em; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            min-height: 80px; display: flex; align-items: center; justify-content: center; gap: 16px;
+        }
+        .vakje-input {
+            font-size: 0.85em; width: 80px; height: 64px;
+            border: 4px solid white; border-radius: 12px;
+            background: rgba(255,255,255,0.2); color: white;
+            text-align: center; font-family: 'Comic Sans MS', cursive, sans-serif;
+            font-weight: bold; -moz-appearance: textfield;
+        }
+        .vakje-input::-webkit-outer-spin-button,
+        .vakje-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .vakje-input:focus { outline: none; background: rgba(255,255,255,0.35); }
+        .button {
+            background: linear-gradient(45deg, #ff6b6b, #feca57); color: white; border: none;
+            padding: 15px 30px; font-size: 1.2em; border-radius: 25px; cursor: pointer; margin: 10px;
+            font-family: 'Comic Sans MS', cursive, sans-serif; font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2); transition: all 0.3s;
+        }
+        .button:hover { transform: translateY(-2px); box-shadow: 0 7px 20px rgba(0,0,0,0.3); }
+        .score-summary { background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 15px; padding: 20px; margin: 20px 0; }
+        .score-summary h3 { margin-top: 0; }
+        .score-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
+        .score-item { background: rgba(255,255,255,0.2); padding: 15px; border-radius: 10px; text-align: center; font-size: 1.3em; font-weight: bold; }
+        .score-item div:first-child { font-size: 0.65em; margin-bottom: 5px; }
+        .resultaten { background: #f8f9fa; border-radius: 15px; padding: 20px; margin: 20px 0; text-align: left; max-height: 400px; overflow-y: auto; }
+        .resultaat-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #dee2e6; font-size: 1.1em; }
+        .resultaat-item:last-child { border-bottom: none; }
+        .correct { color: #28a745; }
+        .wrong   { color: #e67e22; }
+        .start-screen { text-align: center; }
+        .game-screen  { display: none; }
+        .results-screen { display: none; }
+    </style>
+</head>
+<body>
+    <a href="rekenmuur.html" class="home-button">🧱 Rekenmuur</a>
+    <div class="stoplicht-container">
+        <div class="stoplicht">
+            <div class="licht" id="roodLicht"></div>
+            <div class="licht" id="oranjeLicht"></div>
+            <div class="licht groen-aan" id="groenLicht"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="start-screen" id="startScreen">
+            <h1 class="title">16 − … = 10 ⚡</h1>
+            <p class="instructie">Maak zo veel mogelijk sommen in 2 minuten!</p>
+            <button class="button" onclick="startTimer()">🚀 Start</button>
+        </div>
+
+        <div class="game-screen" id="gameScreen">
+            <div class="som-container" id="somContainer"></div>
+            <button class="button" onclick="volgendeSom()">→ Volgende</button>
+        </div>
+
+        <div class="results-screen" id="resultsScreen">
+            <h2 class="title">📊 Resultaten</h2>
+            <div class="score-summary">
+                <h3>Totale score</h3>
+                <div class="score-grid">
+                    <div class="score-item"><div>✅ Goed</div><div id="goedTotaal">0</div></div>
+                    <div class="score-item"><div>📝 Totaal</div><div id="totaalSommen">0</div></div>
+                    <div class="score-item"><div>⏱️ Gem. sec/som</div><div id="gemSeconden">0.0</div></div>
+                </div>
+            </div>
+            <div class="resultaten" id="resultatenLijst"></div>
+            <button class="button" onclick="opnieuwBeginnen()">🔄 Opnieuw</button>
+        </div>
+    </div>
+
+    <script>
+        let sommen = [];
+        let tijdOver = 120;
+        let timerInterval;
+        let spelActief = false;
+        let huidigeSom = null;
+
+        function genereerSom() {
+            const getal1 = 11 + Math.floor(Math.random() * 9); // 11..19
+            return { getal1, antwoord: getal1 - 10, gebruikerAntwoord: null, somNummer: sommen.length + 1 };
+        }
+
+        function toonSom() {
+            const container = document.getElementById('somContainer');
+            container.innerHTML = `
+                <span>${huidigeSom.getal1}</span>
+                <span>−</span>
+                <input class="vakje-input" type="number" id="antwoordInput" min="0" max="9" placeholder="?">
+                <span>= 10</span>
+            `;
+            const input = document.getElementById('antwoordInput');
+            input.focus();
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && spelActief) volgendeSom();
+            });
+        }
+
+        function startTimer() {
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('gameScreen').style.display = 'block';
+            sommen = []; tijdOver = 120; spelActief = true;
+            timerInterval = setInterval(updateTimer, 1000);
+            huidigeSom = genereerSom();
+            sommen.push(huidigeSom);
+            toonSom();
+        }
+
+        function updateTimer() {
+            tijdOver--;
+            const r = document.getElementById('roodLicht');
+            const o = document.getElementById('oranjeLicht');
+            const g = document.getElementById('groenLicht');
+            if (tijdOver <= 0) {
+                r.classList.add('rood-aan'); o.classList.remove('oranje-aan'); g.classList.remove('groen-aan');
+                clearInterval(timerInterval); spelActief = false; toonResultaten();
+            } else if (tijdOver <= 60) {
+                o.classList.add('oranje-aan'); g.classList.remove('groen-aan'); r.classList.remove('rood-aan');
+            }
+        }
+
+        function volgendeSom() {
+            if (!spelActief) return;
+            const input = document.getElementById('antwoordInput');
+            if (input) huidigeSom.gebruikerAntwoord = parseInt(input.value) || null;
+            huidigeSom = genereerSom();
+            sommen.push(huidigeSom);
+            toonSom();
+        }
+
+        function toonResultaten() {
+            const input = document.getElementById('antwoordInput');
+            if (input && input.value !== '') huidigeSom.gebruikerAntwoord = parseInt(input.value) || null;
+            document.getElementById('gameScreen').style.display = 'none';
+            document.getElementById('resultsScreen').style.display = 'block';
+            let goed = 0;
+            const lijst = document.getElementById('resultatenLijst');
+            lijst.innerHTML = '';
+            sommen.forEach(s => {
+                const isCorrect = s.gebruikerAntwoord === s.antwoord;
+                if (isCorrect) goed++;
+                const item = document.createElement('div');
+                item.className = `resultaat-item ${isCorrect ? 'correct' : 'wrong'}`;
+                const gegeven = s.gebruikerAntwoord !== null ? s.gebruikerAntwoord : '(leeg)';
+                item.innerHTML = `<span>Som ${s.somNummer}: ${s.getal1} − … = 10</span><span>${isCorrect ? '✅' : '❌'} ${gegeven}</span>`;
+                lijst.appendChild(item);
+            });
+            const gebruikt = Math.max(0, 120 - tijdOver);
+            document.getElementById('goedTotaal').textContent = goed;
+            document.getElementById('totaalSommen').textContent = sommen.length;
+            document.getElementById('gemSeconden').textContent = sommen.length > 0 ? (gebruikt / sommen.length).toFixed(1) : '0.0';
+        }
+
+        function opnieuwBeginnen() {
+            document.getElementById('resultsScreen').style.display = 'none';
+            document.getElementById('startScreen').style.display = 'block';
+            document.getElementById('roodLicht').classList.remove('rood-aan');
+            document.getElementById('oranjeLicht').classList.remove('oranje-aan');
+            document.getElementById('groenLicht').classList.add('groen-aan');
+        }
+    </script>
+</body>
+</html>
