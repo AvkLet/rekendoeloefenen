@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>70 − 20 = - POWER</title>
+    <style>
+        body { font-family: 'Comic Sans MS', cursive, sans-serif; background: linear-gradient(45deg, #84fab0, #8fd3f4); margin: 0; padding: 20px; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .home-button { position: fixed; top: 20px; left: 20px; background: linear-gradient(45deg, #667eea, #764ba2); color: white; border: none; padding: 12px 24px; font-size: 1.1em; border-radius: 25px; cursor: pointer; font-family: 'Comic Sans MS', cursive, sans-serif; font-weight: bold; box-shadow: 0 5px 15px rgba(0,0,0,0.3); transition: all 0.3s; text-decoration: none; display: inline-block; z-index: 1000; }
+        .home-button:hover { transform: translateY(-2px); }
+        .stoplicht-container { position: fixed; top: 20px; right: 20px; z-index: 1000; }
+        .stoplicht { width: 60px; height: 130px; background: #333; border-radius: 20px; padding: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.4); display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 8px; }
+        .licht { width: 36px; height: 36px; border-radius: 50%; background: #444; border: 2px solid #666; }
+        .licht.rood-aan { background: #ff4444; box-shadow: 0 0 15px #ff4444; }
+        .licht.oranje-aan { background: #ffaa44; box-shadow: 0 0 15px #ffaa44; }
+        .licht.groen-aan { background: #44ff44; box-shadow: 0 0 15px #44ff44; }
+        .container { background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); padding: 40px; text-align: center; max-width: 500px; width: 90%; animation: bounce 0.5s ease-out; }
+        @keyframes bounce { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .title { color: #667eea; font-size: 2.2em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
+        .instructie { font-size: 1.2em; color: #333; margin-bottom: 30px; line-height: 1.6; }
+        .som-container { background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 15px; padding: 30px; margin: 20px 0; font-size: 3em; font-weight: bold; min-height: 80px; display: flex; align-items: center; justify-content: center; }
+        .input-container { margin: 20px 0; }
+        input[type="number"] { font-size: 2em; padding: 15px; border: 3px solid #667eea; border-radius: 10px; width: 130px; text-align: center; font-family: 'Comic Sans MS', cursive, sans-serif; -moz-appearance: textfield; }
+        input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type="number"]:focus { outline: none; border-color: #764ba2; }
+        .feedback { font-size: 1.4em; margin: 10px 0 20px 0; font-weight: bold; min-height: 36px; }
+        .button { background: linear-gradient(45deg, #667eea, #764ba2); color: white; border: none; padding: 14px 32px; font-size: 1.2em; border-radius: 25px; cursor: pointer; margin: 10px; font-family: 'Comic Sans MS', cursive, sans-serif; font-weight: bold; box-shadow: 0 5px 15px rgba(0,0,0,0.2); transition: all 0.3s; }
+        .button:hover { transform: translateY(-2px); }
+        .button:disabled { background: #ccc; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+        .score-summary { background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 15px; padding: 20px; margin: 20px 0; }
+        .score-summary h3 { margin-top: 0; }
+        .score-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
+        .score-item { background: rgba(255,255,255,0.2); padding: 15px; border-radius: 10px; text-align: center; font-size: 1.4em; font-weight: bold; }
+        .score-item div:first-child { font-size: 0.65em; margin-bottom: 5px; }
+        .resultaten { background: #f8f9fa; border-radius: 15px; padding: 15px 20px; margin: 15px 0; text-align: left; max-height: 300px; overflow-y: auto; }
+        .resultaat-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 4px; border-bottom: 1px solid #dee2e6; font-size: 1em; }
+        .resultaat-item:last-child { border-bottom: none; }
+        .correct-res { color: #28a745; } .fout-res { color: #e67e22; }
+        #startScreen { display: block; } #gameScreen { display: none; } #resultsScreen { display: none; }
+    </style>
+</head>
+<body>
+    <a href="rekenmuur.html" class="home-button">🧱 Rekenmuur</a>
+    <div class="stoplicht-container"><div class="stoplicht"><div class="licht" id="roodLicht"></div><div class="licht" id="oranjeLicht"></div><div class="licht groen-aan" id="groenLicht"></div></div></div>
+    <div class="container">
+        <div id="startScreen">
+            <div class="title">70 − 20 =</div>
+            <div class="instructie">Trek de tientallen van elkaar af!<br>Je maakt <strong>20 opdrachten</strong>.</div>
+            <button class="button" onclick="startOefening()">▶ Start!</button>
+        </div>
+        <div id="gameScreen">
+            <div class="title">70 − 20 =</div>
+            <div class="som-container" id="somTekst"></div>
+            <div class="input-container"><input type="number" id="antwoordInput" placeholder="?"></div>
+            <div class="feedback" id="feedback"></div>
+            <button class="button" id="volgendeBtn" onclick="controleer()">✔ Controleer</button>
+        </div>
+        <div id="resultsScreen">
+            <div class="title">🎉 Klaar!</div>
+            <div class="score-summary"><h3>Jouw score</h3><div class="score-grid"><div class="score-item"><div>✅ Goed</div><div id="goedTotaal">0</div></div><div class="score-item"><div>📝 Totaal</div><div>20</div></div></div></div>
+            <div class="resultaten" id="resultatenLijst"></div>
+            <button class="button" onclick="opnieuwBeginnen()">🔄 Opnieuw</button>
+        </div>
+    </div>
+    <script>
+        const TOTAAL = 20;
+        let huidigeSomIndex = 0, sommen = [], huidigeSom = null;
+        function genereerSom() {
+            let g1, g2;
+            do {
+                g1 = 10 * (1 + Math.floor(Math.random() * 9)); // 10..90
+                g2 = 10 * (1 + Math.floor(Math.random() * 9)); // 10..90
+            } while (g1 - g2 < 0);
+            return { getal1: g1, getal2: g2, antwoord: g1 - g2 };
+        }
+        function startOefening() { document.getElementById('startScreen').style.display = 'none'; document.getElementById('gameScreen').style.display = 'block'; nieuweOpgave(); }
+        function updateStoplicht() {
+            const r = document.getElementById('roodLicht'), o = document.getElementById('oranjeLicht'), g = document.getElementById('groenLicht');
+            r.classList.remove('rood-aan'); o.classList.remove('oranje-aan'); g.classList.remove('groen-aan');
+            if (huidigeSomIndex >= TOTAAL) r.classList.add('rood-aan');
+            else if (huidigeSomIndex >= TOTAAL / 2) o.classList.add('oranje-aan');
+            else g.classList.add('groen-aan');
+        }
+        function nieuweOpgave() {
+            document.getElementById('feedback').textContent = ''; document.getElementById('volgendeBtn').disabled = false; document.getElementById('antwoordInput').value = '';
+            huidigeSom = genereerSom();
+            document.getElementById('somTekst').textContent = `${huidigeSom.getal1} − ${huidigeSom.getal2} =`;
+            document.getElementById('antwoordInput').focus(); updateStoplicht();
+        }
+        function controleer() {
+            const input = document.getElementById('antwoordInput'), waarde = parseInt(input.value), fb = document.getElementById('feedback'), btn = document.getElementById('volgendeBtn');
+            if (isNaN(waarde)) { fb.textContent = 'Vul een antwoord in!'; fb.style.color = '#ff6b6b'; return; }
+            btn.disabled = true;
+            const goed = waarde === huidigeSom.antwoord;
+            sommen.push({ getal1: huidigeSom.getal1, getal2: huidigeSom.getal2, antwoord: huidigeSom.antwoord, gegeven: waarde, goed });
+            if (goed) { fb.textContent = '✅ Goed!'; fb.style.color = '#28a745'; setTimeout(volgende, 1000); }
+            else { fb.textContent = `${huidigeSom.getal1} − ${huidigeSom.getal2} = ${huidigeSom.antwoord}`; fb.style.color = '#ff9800'; setTimeout(volgende, 3000); }
+        }
+        function volgende() { huidigeSomIndex++; if (huidigeSomIndex >= TOTAAL) { updateStoplicht(); toonResultaten(); } else nieuweOpgave(); }
+        function toonResultaten() { document.getElementById('gameScreen').style.display = 'none'; document.getElementById('resultsScreen').style.display = 'block'; let goed = 0; const lijst = document.getElementById('resultatenLijst'); lijst.innerHTML = ''; sommen.forEach((s, i) => { if (s.goed) goed++; const item = document.createElement('div'); item.className = 'resultaat-item'; item.innerHTML = `<span>Som ${i+1}: ${s.getal1} − ${s.getal2} = ${s.antwoord}</span><span class="${s.goed ? 'correct-res' : 'fout-res'}">${s.goed ? '✅' : '❌ ' + s.gegeven}</span>`; lijst.appendChild(item); }); document.getElementById('goedTotaal').textContent = goed; }
+        function opnieuwBeginnen() { sommen = []; huidigeSomIndex = 0; document.getElementById('resultsScreen').style.display = 'none'; document.getElementById('startScreen').style.display = 'block'; document.getElementById('roodLicht').classList.remove('rood-aan'); document.getElementById('oranjeLicht').classList.remove('oranje-aan'); document.getElementById('groenLicht').classList.add('groen-aan'); }
+        document.addEventListener('keypress', function(e) { if (e.key === 'Enter') { const btn = document.getElementById('volgendeBtn'); if (btn && !btn.disabled) controleer(); } });
+    </script>
+</body>
+</html>
