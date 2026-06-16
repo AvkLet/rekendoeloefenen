@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Getalbegrip tot 1000</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(45deg, #84fab0, #8fd3f4);
+            margin: 0; padding: 20px; min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .home-button {
+            position: fixed; top: 20px; left: 20px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white; border: none; padding: 12px 24px; font-size: 1.1em;
+            border-radius: 25px; cursor: pointer;
+            font-family: 'Comic Sans MS', cursive, sans-serif; font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); transition: all 0.3s;
+            text-decoration: none; display: inline-block; z-index: 1000;
+        }
+        .home-button:hover { transform: translateY(-2px); }
+        .stoplicht-container { position: fixed; top: 20px; right: 20px; z-index: 1000; }
+        .stoplicht {
+            width: 60px; height: 130px; background: #333; border-radius: 20px;
+            padding: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+            display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 8px;
+        }
+        .licht { width: 36px; height: 36px; border-radius: 50%; background: #444; border: 2px solid #666; }
+        .licht.rood-aan   { background: #ff4444; box-shadow: 0 0 15px #ff4444; }
+        .licht.oranje-aan { background: #ffaa44; box-shadow: 0 0 15px #ffaa44; }
+        .licht.groen-aan  { background: #44ff44; box-shadow: 0 0 15px #44ff44; }
+        .container {
+            background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 40px; text-align: center; max-width: 780px; width: 90%;
+            animation: bounce 0.5s ease-out;
+        }
+        @keyframes bounce { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .title { color: #667eea; font-size: 2.2em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
+        .instructie { font-size: 1.2em; color: #333; margin-bottom: 30px; line-height: 1.6; }
+        .opdracht-label { font-size: 1.3em; font-weight: bold; color: #667eea; margin-bottom: 24px; min-height: 36px; }
+
+        .vakjes-container {
+            display: flex; justify-content: center; gap: 10px;
+            margin: 20px 0 40px 0; flex-wrap: wrap;
+        }
+        .vakje {
+            width: 72px; height: 72px; border: 3px solid #667eea; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5em; font-weight: bold; background: white;
+            position: relative; flex-shrink: 0;
+        }
+        .vakje.gevuld { background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-color: #764ba2; }
+        .vakje input {
+            width: 58px; height: 54px; font-size: 1.1em; text-align: center;
+            border: none; background: transparent;
+            font-family: 'Comic Sans MS', cursive, sans-serif; font-weight: bold;
+            color: #333; -moz-appearance: textfield;
+        }
+        .vakje input::-webkit-outer-spin-button,
+        .vakje input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .vakje input:focus { outline: none; background: #f0f8ff; border-radius: 8px; }
+        .vakje.correct   { background: #d4edda; border-color: #28a745; }
+        .vakje.incorrect { background: #fff3cd; border-color: #ff9800; }
+        .correct-answer {
+            position: absolute; bottom: -24px; left: 50%; transform: translateX(-50%);
+            background: #ff9800; color: white; padding: 2px 7px; border-radius: 6px;
+            font-size: 0.6em; white-space: nowrap;
+        }
+
+        /* Som-stijl voor spring honderdtal */
+        .som-container {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white; border-radius: 15px; padding: 30px; margin: 20px 0 40px 0;
+            font-size: 2.4em; font-weight: bold; min-height: 80px;
+            display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap;
+        }
+        .som-vakje-input {
+            font-size: 0.7em; width: 110px; height: 64px;
+            border: 4px solid white; border-radius: 12px;
+            background: rgba(255,255,255,0.2); color: white;
+            text-align: center; font-family: 'Comic Sans MS', cursive, sans-serif;
+            font-weight: bold; -moz-appearance: textfield;
+        }
+        .som-vakje-input::-webkit-outer-spin-button,
+        .som-vakje-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .som-vakje-input:focus { outline: none; background: rgba(255,255,255,0.35); }
+        .som-vakje-input.correct { border-color: #44ff44; background: rgba(68,255,68,0.2); }
+        .som-vakje-input.incorrect { border-color: #ffaa44; background: rgba(255,170,68,0.2); }
+
+        /* Keuze vakjes */
+        .keuze-vakje {
+            width: 110px; height: 72px; border: 3px solid #667eea; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5em; font-weight: bold; background: white;
+            cursor: pointer; transition: all 0.2s; flex-shrink: 0;
+        }
+        .keuze-vakje:hover { background: #e8eeff; transform: scale(1.05); }
+        .keuze-vakje.gekozen { background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-color: #764ba2; }
+        .keuze-vakje.correct  { background: #d4edda; border-color: #28a745; color: #28a745; }
+        .keuze-vakje.incorrect { background: #fff3cd; border-color: #ff9800; color: #ff9800; }
+
+        .feedback { font-size: 1.4em; margin: 10px 0 20px 0; font-weight: bold; min-height: 36px; }
+        .button {
+            background: linear-gradient(45deg, #667eea, #764ba2); color: white; border: none;
+            padding: 14px 32px; font-size: 1.2em; border-radius: 25px; cursor: pointer; margin: 10px;
+            font-family: 'Comic Sans MS', cursive, sans-serif; font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2); transition: all 0.3s;
+        }
+        .button:hover { transform: translateY(-2px); }
+        .button:disabled { background: #ccc; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+
+        .score-summary { background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 15px; padding: 20px; margin: 20px 0; }
+        .score-summary h3 { margin-top: 0; }
+        .score-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
+        .score-item { background: rgba(255,255,255,0.2); padding: 15px; border-radius: 10px; text-align: center; font-size: 1.4em; font-weight: bold; }
+        .score-item div:first-child { font-size: 0.65em; margin-bottom: 5px; }
+        .resultaten { background: #f8f9fa; border-radius: 15px; padding: 15px 20px; margin: 15px 0; text-align: left; max-height: 300px; overflow-y: auto; }
+        .resultaat-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 4px; border-bottom: 1px solid #dee2e6; font-size: 0.95em; }
+        .resultaat-item:last-child { border-bottom: none; }
+        .correct-res { color: #28a745; }
+        .fout-res    { color: #e67e22; }
+
+        #startScreen   { display: block; }
+        #gameScreen    { display: none; }
+        #resultsScreen { display: none; }
+    </style>
+</head>
+<body>
+    <a href="rekenmuur.html" class="home-button">🧱 Rekenmuur</a>
+    <div class="stoplicht-container">
+        <div class="stoplicht">
+            <div class="licht" id="roodLicht"></div>
+            <div class="licht" id="oranjeLicht"></div>
+            <div class="licht groen-aan" id="groenLicht"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div id="startScreen">
+            <div class="title">🔢 Getalbegrip tot 1000</div>
+            <div class="instructie">Oefenen met getallen tot 1000!<br>Je maakt <strong>30 opdrachten</strong>.</div>
+            <button class="button" onclick="startOefening()">▶ Start!</button>
+        </div>
+
+        <div id="gameScreen">
+            <div class="title">🔢 Getalbegrip tot 1000</div>
+            <div class="opdracht-label" id="opdrachtLabel"></div>
+            <div id="opdrachtGebied"></div>
+            <div class="feedback" id="feedback"></div>
+            <button class="button" id="volgendeBtn" onclick="controleer()">✔ Controleer</button>
+        </div>
+
+        <div id="resultsScreen">
+            <div class="title">🎉 Klaar!</div>
+            <div class="score-summary">
+                <h3>Jouw score</h3>
+                <div class="score-grid">
+                    <div class="score-item"><div>✅ Goed</div><div id="goedTotaal">0</div></div>
+                    <div class="score-item"><div>📝 Totaal</div><div>30</div></div>
+                </div>
+            </div>
+            <div class="resultaten" id="resultatenLijst"></div>
+            <button class="button" onclick="opnieuwBeginnen()">🔄 Opnieuw</button>
+        </div>
+    </div>
+
+    <script>
+        const TOTAAL = 30;
+        let huidigeSomIndex = 0;
+        let sommen = [];
+        let huidigeOpdracht = null;
+        let gekozenKeuze = null;
+        let volgorde = [];
+
+        function maakVolgorde() {
+            let arr = [];
+            for (let i = 0; i < 5; i++) arr.push('grootste');
+            for (let i = 0; i < 5; i++) arr.push('kleinste');
+            for (let i = 0; i < 5; i++) arr.push('spring_honderd_vooruit');
+            for (let i = 0; i < 5; i++) arr.push('spring_honderd_terug');
+            for (let i = 0; i < 5; i++) arr.push('plus10');
+            for (let i = 0; i < 5; i++) arr.push('min10');
+            return shuffle(arr);
+        }
+
+        function shuffle(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function startOefening() {
+            volgorde = maakVolgorde();
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('gameScreen').style.display = 'block';
+            nieuweOpgave();
+        }
+
+        function updateStoplicht() {
+            const r = document.getElementById('roodLicht');
+            const o = document.getElementById('oranjeLicht');
+            const g = document.getElementById('groenLicht');
+            r.classList.remove('rood-aan'); o.classList.remove('oranje-aan'); g.classList.remove('groen-aan');
+            if (huidigeSomIndex >= TOTAAL)           r.classList.add('rood-aan');
+            else if (huidigeSomIndex >= TOTAAL / 2)  o.classList.add('oranje-aan');
+            else                                      g.classList.add('groen-aan');
+        }
+
+        function nieuweOpgave() {
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('volgendeBtn').disabled = false;
+            gekozenKeuze = null;
+
+            const type = volgorde[huidigeSomIndex];
+            huidigeOpdracht = maakOpdracht(type);
+
+            document.getElementById('opdrachtLabel').textContent = huidigeOpdracht.label;
+            tekenOpdracht(huidigeOpdracht);
+            updateStoplicht();
+        }
+
+        function maakOpdracht(type) {
+            if (type === 'grootste' || type === 'kleinste') {
+                let getallen = [];
+                while (getallen.length < 3) {
+                    let g = 100 + Math.floor(Math.random() * 901); // 100..1000
+                    if (!getallen.includes(g)) getallen.push(g);
+                }
+                getallen = shuffle(getallen);
+                const antwoord = type === 'grootste' ? Math.max(...getallen) : Math.min(...getallen);
+                return {
+                    type, label: type === 'grootste' ? 'Klik op het grootste getal.' : 'Klik op het kleinste getal.',
+                    getallen, antwoord
+                };
+            }
+            if (type === 'spring_honderd_vooruit') {
+                let start, stap, antwoord;
+                do {
+                    start = 100 + Math.floor(Math.random() * 801); // 100..900
+                    stap = 100 * (1 + Math.floor(Math.random() * 9)); // 100..900
+                    antwoord = start + stap;
+                } while (antwoord > 1000);
+                return {
+                    type, label: `Spring ${stap} vooruit.`,
+                    start, stap, antwoord, operator: '+'
+                };
+            }
+            if (type === 'spring_honderd_terug') {
+                let start, stap, antwoord;
+                do {
+                    start = 100 + Math.floor(Math.random() * 801); // 100..900
+                    stap = 100 * (1 + Math.floor(Math.random() * 9)); // 100..900
+                    antwoord = start - stap;
+                } while (antwoord < 1);
+                return {
+                    type, label: `Spring ${stap} terug.`,
+                    start, stap, antwoord, operator: '−'
+                };
+            }
+            if (type === 'plus10') {
+                let anker = 0; // vast links
+                let start = 10 + Math.floor(Math.random() * 985); // zodat +4 <= 999
+                let reeks = [];
+                for (let i = 0; i < 5; i++) reeks.push(start + i * 10);
+                return {
+                    type, label: 'Tel steeds 10 verder. Vul de ontbrekende getallen in.',
+                    reeks, anker, invulbaar: [0,1,2,3,4].filter(i => i !== anker)
+                };
+            }
+            if (type === 'min10') {
+                let anker = 4; // vast rechts
+                let start = 50 + Math.floor(Math.random() * 950); // zodat -40 >= 10
+                let reeks = [];
+                for (let i = 0; i < 5; i++) reeks.push(start - i * 10);
+                return {
+                    type, label: 'Tel steeds 10 terug. Vul de ontbrekende getallen in.',
+                    reeks, anker, invulbaar: [0,1,2,3,4].filter(i => i !== anker)
+                };
+            }
+        }
+
+        function tekenOpdracht(opdracht) {
+            const gebied = document.getElementById('opdrachtGebied');
+            gebied.innerHTML = '';
+
+            if (opdracht.type === 'grootste' || opdracht.type === 'kleinste') {
+                const container = document.createElement('div');
+                container.className = 'vakjes-container';
+                opdracht.getallen.forEach((getal) => {
+                    const vakje = document.createElement('div');
+                    vakje.className = 'keuze-vakje';
+                    vakje.textContent = getal;
+                    vakje.dataset.getal = getal;
+                    vakje.addEventListener('click', () => kiesGetal(vakje, getal));
+                    container.appendChild(vakje);
+                });
+                gebied.appendChild(container);
+            } else if (opdracht.type === 'spring_honderd_vooruit' || opdracht.type === 'spring_honderd_terug') {
+                const som = document.createElement('div');
+                som.className = 'som-container';
+                if (opdracht.type === 'spring_honderd_terug') {
+                    som.innerHTML = `
+                        <input class="som-vakje-input" type="number" id="antwoordInput" placeholder="?">
+                        <span>${opdracht.start}</span>
+                    `;
+                } else {
+                    som.innerHTML = `
+                        <span>${opdracht.start}</span>
+                        <input class="som-vakje-input" type="number" id="antwoordInput" placeholder="?">
+                    `;
+                }
+                gebied.appendChild(som);
+                document.getElementById('antwoordInput').focus();
+                document.getElementById('antwoordInput').addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter' && !document.getElementById('volgendeBtn').disabled) controleer();
+                });
+            } else {
+                // plus10 / min10 reeks
+                const container = document.createElement('div');
+                container.className = 'vakjes-container';
+                opdracht.reeks.forEach((getal, i) => {
+                    const vakje = document.createElement('div');
+                    vakje.className = 'vakje';
+                    if (i === opdracht.anker) {
+                        vakje.classList.add('gevuld');
+                        vakje.textContent = getal;
+                    } else {
+                        const input = document.createElement('input');
+                        input.type = 'number';
+                        input.id = `v${i}`;
+                        input.addEventListener('keypress', e => {
+                            if (e.key === 'Enter' && !document.getElementById('volgendeBtn').disabled) controleer();
+                        });
+                        vakje.appendChild(input);
+                    }
+                    container.appendChild(vakje);
+                });
+                gebied.appendChild(container);
+                const eersteInput = container.querySelector('input');
+                if (eersteInput) eersteInput.focus();
+            }
+        }
+
+        function kiesGetal(vakje, getal) {
+            document.querySelectorAll('.keuze-vakje').forEach(v => v.classList.remove('gekozen'));
+            vakje.classList.add('gekozen');
+            gekozenKeuze = getal;
+        }
+
+        function controleer() {
+            const opdracht = huidigeOpdracht;
+            const fb = document.getElementById('feedback');
+            const btn = document.getElementById('volgendeBtn');
+
+            if (opdracht.type === 'grootste' || opdracht.type === 'kleinste') {
+                if (gekozenKeuze === null) {
+                    fb.textContent = 'Klik eerst op een getal!';
+                    fb.style.color = '#ff6b6b';
+                    return;
+                }
+                btn.disabled = true;
+                const goed = gekozenKeuze === opdracht.antwoord;
+                document.querySelectorAll('.keuze-vakje').forEach(v => {
+                    const g = parseInt(v.dataset.getal);
+                    if (g === opdracht.antwoord) v.classList.add('correct');
+                    else if (g === gekozenKeuze && !goed) v.classList.add('incorrect');
+                });
+                sommen.push({ label: opdracht.label + ' (' + opdracht.getallen.join(', ') + ')', goed });
+                if (goed) { fb.textContent = '✅ Goed!'; fb.style.color = '#28a745'; setTimeout(volgende, 1000); }
+                else { fb.textContent = 'Kijk goed naar het goede antwoord!'; fb.style.color = '#ff9800'; setTimeout(volgende, 3000); }
+
+            } else if (opdracht.type === 'spring_honderd_vooruit' || opdracht.type === 'spring_honderd_terug') {
+                const input = document.getElementById('antwoordInput');
+                const waarde = parseInt(input.value);
+                if (isNaN(waarde)) { fb.textContent = 'Vul een antwoord in!'; fb.style.color = '#ff6b6b'; return; }
+                btn.disabled = true;
+                const goed = waarde === opdracht.antwoord;
+                sommen.push({ label: `${opdracht.label} ${opdracht.start} ${opdracht.operator} ${opdracht.stap} = ${opdracht.antwoord}`, goed });
+                if (goed) {
+                    input.classList.add('correct');
+                    fb.textContent = '✅ Goed!'; fb.style.color = '#28a745'; setTimeout(volgende, 1000);
+                } else {
+                    input.classList.add('incorrect');
+                    input.value = opdracht.antwoord;
+                    fb.textContent = `${opdracht.start} ${opdracht.operator} ${opdracht.stap} = ${opdracht.antwoord}`;
+                    fb.style.color = '#ff9800'; setTimeout(volgende, 3000);
+                }
+
+            } else {
+                // plus10 / min10
+                const vakjes = document.querySelectorAll('.vakje');
+                let allemaalGoed = true;
+                let aantalLeeg = 0;
+
+                vakjes.forEach((vakje, i) => {
+                    if (i === opdracht.anker) return;
+                    const input = vakje.querySelector('input');
+                    if (!input) return;
+                    const waarde = parseInt(input.value);
+                    const oud = vakje.querySelector('.correct-answer');
+                    if (oud) oud.remove();
+                    vakje.classList.remove('correct', 'incorrect');
+
+                    if (isNaN(waarde)) { aantalLeeg++; return; }
+
+                    if (waarde === opdracht.reeks[i]) {
+                        vakje.classList.add('correct');
+                    } else {
+                        vakje.classList.add('incorrect');
+                        allemaalGoed = false;
+                        const label = document.createElement('div');
+                        label.className = 'correct-answer';
+                        label.textContent = opdracht.reeks[i];
+                        vakje.appendChild(label);
+                    }
+                });
+
+                if (aantalLeeg > 0) {
+                    fb.textContent = 'Vul alle vakjes in!'; fb.style.color = '#ff6b6b';
+                    return;
+                }
+
+                btn.disabled = true;
+                sommen.push({ label: opdracht.label + ' (' + opdracht.reeks.join(' → ') + ')', goed: allemaalGoed });
+
+                if (allemaalGoed) { fb.textContent = '✅ Goed!'; fb.style.color = '#28a745'; setTimeout(volgende, 1000); }
+                else { fb.textContent = 'Kijk goed naar het goede antwoord!'; fb.style.color = '#ff9800'; setTimeout(volgende, 3000); }
+            }
+        }
+
+        function volgende() {
+            huidigeSomIndex++;
+            if (huidigeSomIndex >= TOTAAL) {
+                updateStoplicht();
+                toonResultaten();
+            } else {
+                nieuweOpgave();
+            }
+        }
+
+        function toonResultaten() {
+            document.getElementById('gameScreen').style.display = 'none';
+            document.getElementById('resultsScreen').style.display = 'block';
+            let goed = 0;
+            const lijst = document.getElementById('resultatenLijst');
+            lijst.innerHTML = '';
+            sommen.forEach((s, idx) => {
+                if (s.goed) goed++;
+                const item = document.createElement('div');
+                item.className = 'resultaat-item';
+                item.innerHTML = `<span>Opdracht ${idx+1}: ${s.label}</span><span class="${s.goed ? 'correct-res' : 'fout-res'}">${s.goed ? '✅' : '❌'}</span>`;
+                lijst.appendChild(item);
+            });
+            document.getElementById('goedTotaal').textContent = goed;
+        }
+
+        function opnieuwBeginnen() {
+            sommen = []; huidigeSomIndex = 0;
+            document.getElementById('resultsScreen').style.display = 'none';
+            document.getElementById('startScreen').style.display = 'block';
+            document.getElementById('roodLicht').classList.remove('rood-aan');
+            document.getElementById('oranjeLicht').classList.remove('oranje-aan');
+            document.getElementById('groenLicht').classList.add('groen-aan');
+        }
+    </script>
+</body>
+</html>
