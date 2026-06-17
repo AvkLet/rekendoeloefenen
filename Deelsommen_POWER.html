@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delen - POWER</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(45deg, #84fab0, #8fd3f4);
+            margin: 0; padding: 20px; min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .home-button {
+            position: fixed; top: 20px; left: 20px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white; border: none; padding: 12px 24px; font-size: 1.1em;
+            border-radius: 25px; cursor: pointer;
+            font-family: 'Comic Sans MS', cursive, sans-serif; font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); transition: all 0.3s;
+            text-decoration: none; display: inline-block; z-index: 1000;
+        }
+        .home-button:hover { transform: translateY(-2px); }
+        .stoplicht-container { position: fixed; top: 20px; right: 20px; z-index: 1000; }
+        .stoplicht {
+            width: 60px; height: 130px; background: #333; border-radius: 20px;
+            padding: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+            display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 8px;
+        }
+        .licht { width: 36px; height: 36px; border-radius: 50%; background: #444; border: 2px solid #666; }
+        .licht.rood-aan   { background: #ff4444; box-shadow: 0 0 15px #ff4444; }
+        .licht.oranje-aan { background: #ffaa44; box-shadow: 0 0 15px #ffaa44; }
+        .licht.groen-aan  { background: #44ff44; box-shadow: 0 0 15px #44ff44; }
+        .container {
+            background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 40px; text-align: center; max-width: 500px; width: 90%;
+            animation: bounce 0.5s ease-out;
+        }
+        @keyframes bounce { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .title { color: #667eea; font-size: 2.2em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
+        .instructie { font-size: 1.2em; color: #333; margin-bottom: 30px; line-height: 1.6; }
+        .opdracht-label { font-size: 1.1em; color: #667eea; font-weight: bold; margin-bottom: 16px; min-height: 24px; }
+        .som-container {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white; border-radius: 15px; padding: 30px; margin: 10px 0 30px 0;
+            font-size: 2.6em; font-weight: bold; min-height: 80px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .input-container { margin: 20px 0; }
+        input[type="text"] {
+            font-size: 1.6em; padding: 15px; border: 3px solid #667eea;
+            border-radius: 10px; width: 200px; text-align: center;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+        }
+        input[type="text"]:focus { outline: none; border-color: #764ba2; }
+        .hint { font-size: 0.9em; color: #888; margin-top: 8px; }
+        .feedback { font-size: 1.4em; margin: 10px 0 20px 0; font-weight: bold; min-height: 36px; }
+        .button {
+            background: linear-gradient(45deg, #667eea, #764ba2); color: white; border: none;
+            padding: 14px 32px; font-size: 1.2em; border-radius: 25px; cursor: pointer; margin: 10px;
+            font-family: 'Comic Sans MS', cursive, sans-serif; font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2); transition: all 0.3s;
+        }
+        .button:hover { transform: translateY(-2px); }
+        .button:disabled { background: #ccc; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+        .score-summary { background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 15px; padding: 20px; margin: 20px 0; }
+        .score-summary h3 { margin-top: 0; }
+        .score-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
+        .score-item { background: rgba(255,255,255,0.2); padding: 15px; border-radius: 10px; text-align: center; font-size: 1.4em; font-weight: bold; }
+        .score-item div:first-child { font-size: 0.65em; margin-bottom: 5px; }
+        .resultaten { background: #f8f9fa; border-radius: 15px; padding: 15px 20px; margin: 15px 0; text-align: left; max-height: 300px; overflow-y: auto; }
+        .resultaat-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 4px; border-bottom: 1px solid #dee2e6; font-size: 1em; }
+        .resultaat-item:last-child { border-bottom: none; }
+        .correct-res { color: #28a745; } .fout-res { color: #e67e22; }
+        #startScreen { display: block; } #gameScreen { display: none; } #resultsScreen { display: none; }
+    </style>
+</head>
+<body>
+    <a href="rekenmuur.html" class="home-button">🧱 Rekenmuur</a>
+    <div class="stoplicht-container"><div class="stoplicht"><div class="licht" id="roodLicht"></div><div class="licht" id="oranjeLicht"></div><div class="licht groen-aan" id="groenLicht"></div></div></div>
+    <div class="container">
+        <div id="startScreen">
+            <div class="title">➗ Delen</div>
+            <div class="instructie">Maak de deelsommen!<br>Sommige sommen hebben een rest.<br>Je maakt <strong>20 opdrachten</strong>.</div>
+            <button class="button" onclick="startOefening()">▶ Start!</button>
+        </div>
+        <div id="gameScreen">
+            <div class="title">➗ Delen</div>
+            <div class="opdracht-label" id="opdrachtLabel"></div>
+            <div class="som-container" id="somTekst"></div>
+            <div class="input-container">
+                <input type="text" id="antwoordInput" placeholder="?" autocomplete="off">
+                <div class="hint" id="hint"></div>
+            </div>
+            <div class="feedback" id="feedback"></div>
+            <button class="button" id="volgendeBtn" onclick="controleer()">✔ Controleer</button>
+        </div>
+        <div id="resultsScreen">
+            <div class="title">🎉 Klaar!</div>
+            <div class="score-summary"><h3>Jouw score</h3><div class="score-grid"><div class="score-item"><div>✅ Goed</div><div id="goedTotaal">0</div></div><div class="score-item"><div>📝 Totaal</div><div>20</div></div></div></div>
+            <div class="resultaten" id="resultatenLijst"></div>
+            <button class="button" onclick="opnieuwBeginnen()">🔄 Opnieuw</button>
+        </div>
+    </div>
+    <script>
+        const TOTAAL = 20;
+        let huidigeSomIndex = 0, sommen = [], huidigeSom = null;
+        let volgorde = [];
+
+        function shuffle(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function maakVolgorde() {
+            let arr = [];
+            for (let i = 0; i < 7; i++) arr.push('metRest');
+            for (let i = 0; i < 7; i++) arr.push('klein');
+            for (let i = 0; i < 6; i++) arr.push('groot');
+            return shuffle(arr);
+        }
+
+        function genereerSom(type) {
+            if (type === 'metRest') {
+                // deeltal 2-cijferig, deler 2-9, met rest
+                let deeltal, deler, quotient, rest;
+                do {
+                    deeltal = 11 + Math.floor(Math.random() * 88); // 11..98
+                    deler = 2 + Math.floor(Math.random() * 8); // 2..9
+                    quotient = Math.floor(deeltal / deler);
+                    rest = deeltal % deler;
+                } while (rest === 0 || quotient === 0);
+                return { type, deeltal, deler, quotient, rest, metRest: true };
+            }
+            if (type === 'klein') {
+                // deler 2-9, quotient 2-15, deeltal = deler*quotient (max 60)
+                let deler, quotient, deeltal;
+                do {
+                    deler = 2 + Math.floor(Math.random() * 8); // 2..9
+                    quotient = 2 + Math.floor(Math.random() * 14); // 2..15
+                    deeltal = deler * quotient;
+                } while (deeltal > 60);
+                return { type, deeltal, deler, quotient, rest: 0, metRest: false };
+            }
+            if (type === 'groot') {
+                // deler kan tiental zijn (10-90) of klein (2-9), quotient tot 90, deeltal tot 800
+                let deler, quotient, deeltal;
+                const delerIsTiental = Math.random() < 0.5;
+                if (delerIsTiental) {
+                    deler = 10 * (1 + Math.floor(Math.random() * 9)); // 10..90
+                    quotient = 2 + Math.floor(Math.random() * 9); // 2..10
+                } else {
+                    deler = 2 + Math.floor(Math.random() * 8); // 2..9
+                    quotient = 10 + Math.floor(Math.random() * 71); // 10..80
+                }
+                deeltal = deler * quotient;
+                return { type, deeltal, deler, quotient, rest: 0, metRest: false };
+            }
+        }
+
+        function startOefening() {
+            volgorde = maakVolgorde();
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('gameScreen').style.display = 'block';
+            nieuweOpgave();
+        }
+
+        function updateStoplicht() {
+            const r = document.getElementById('roodLicht'), o = document.getElementById('oranjeLicht'), g = document.getElementById('groenLicht');
+            r.classList.remove('rood-aan'); o.classList.remove('oranje-aan'); g.classList.remove('groen-aan');
+            if (huidigeSomIndex >= TOTAAL) r.classList.add('rood-aan');
+            else if (huidigeSomIndex >= TOTAAL / 2) o.classList.add('oranje-aan');
+            else g.classList.add('groen-aan');
+        }
+
+        function nieuweOpgave() {
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('volgendeBtn').disabled = false;
+            const input = document.getElementById('antwoordInput');
+            input.value = '';
+
+            huidigeSom = genereerSom(volgorde[huidigeSomIndex]);
+            document.getElementById('somTekst').textContent = `${huidigeSom.deeltal} : ${huidigeSom.deler} =`;
+
+            const hint = document.getElementById('hint');
+            if (huidigeSom.metRest) {
+                hint.textContent = 'Tip: typ bijvoorbeeld "6 r 4" als er een rest is.';
+            } else {
+                hint.textContent = '';
+            }
+
+            input.focus();
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !document.getElementById('volgendeBtn').disabled) controleer();
+            });
+            updateStoplicht();
+        }
+
+        function parseAntwoord(tekst) {
+            // Normaliseer: lowercase, trim
+            let t = tekst.toLowerCase().trim();
+            // Vervang scheidingstekens door een vast teken
+            t = t.replace(/\s+/g, ' ');
+            // Patronen: "6 rest 4", "6 r 4", "6r4", "6,4", "6 o 4", "6 over 4", "6o4"
+            const patterns = [
+                /^(\d+)\s*rest\s*(\d+)$/,
+                /^(\d+)\s*r\s*(\d+)$/,
+                /^(\d+)\s*,\s*(\d+)$/,
+                /^(\d+)\s*o\s*(\d+)$/,
+                /^(\d+)\s*over\s*(\d+)$/,
+                /^(\d+)$/
+            ];
+            for (const p of patterns) {
+                const m = t.match(p);
+                if (m) {
+                    return { quotient: parseInt(m[1]), rest: m[2] !== undefined ? parseInt(m[2]) : 0 };
+                }
+            }
+            return null;
+        }
+
+        function controleer() {
+            const input = document.getElementById('antwoordInput');
+            const parsed = parseAntwoord(input.value);
+            const fb = document.getElementById('feedback');
+            const btn = document.getElementById('volgendeBtn');
+
+            if (!parsed) {
+                fb.textContent = 'Vul een antwoord in!';
+                fb.style.color = '#ff6b6b';
+                return;
+            }
+
+            btn.disabled = true;
+            const goed = parsed.quotient === huidigeSom.quotient && parsed.rest === huidigeSom.rest;
+            const juisteTekst = huidigeSom.metRest ? `${huidigeSom.quotient} r ${huidigeSom.rest}` : `${huidigeSom.quotient}`;
+
+            sommen.push({
+                som: `${huidigeSom.deeltal} : ${huidigeSom.deler}`,
+                juist: juisteTekst,
+                gegeven: input.value,
+                goed
+            });
+
+            if (goed) {
+                fb.textContent = '✅ Goed!';
+                fb.style.color = '#28a745';
+                setTimeout(volgende, 1000);
+            } else {
+                fb.textContent = `${huidigeSom.deeltal} : ${huidigeSom.deler} = ${juisteTekst}`;
+                fb.style.color = '#ff9800';
+                setTimeout(volgende, 3000);
+            }
+        }
+
+        function volgende() {
+            huidigeSomIndex++;
+            if (huidigeSomIndex >= TOTAAL) {
+                updateStoplicht();
+                toonResultaten();
+            } else {
+                nieuweOpgave();
+            }
+        }
+
+        function toonResultaten() {
+            document.getElementById('gameScreen').style.display = 'none';
+            document.getElementById('resultsScreen').style.display = 'block';
+            let goed = 0;
+            const lijst = document.getElementById('resultatenLijst');
+            lijst.innerHTML = '';
+            sommen.forEach((s, i) => {
+                if (s.goed) goed++;
+                const item = document.createElement('div');
+                item.className = 'resultaat-item';
+                item.innerHTML = `<span>Som ${i+1}: ${s.som} = ${s.juist}</span><span class="${s.goed ? 'correct-res' : 'fout-res'}">${s.goed ? '✅' : '❌ ' + s.gegeven}</span>`;
+                lijst.appendChild(item);
+            });
+            document.getElementById('goedTotaal').textContent = goed;
+        }
+
+        function opnieuwBeginnen() {
+            sommen = []; huidigeSomIndex = 0;
+            document.getElementById('resultsScreen').style.display = 'none';
+            document.getElementById('startScreen').style.display = 'block';
+            document.getElementById('roodLicht').classList.remove('rood-aan');
+            document.getElementById('oranjeLicht').classList.remove('oranje-aan');
+            document.getElementById('groenLicht').classList.add('groen-aan');
+        }
+    </script>
+</body>
+</html>
