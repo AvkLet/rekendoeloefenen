@@ -81,7 +81,7 @@
     <div class="container">
         <div id="startScreen">
             <div class="title">➗ Delen</div>
-            <div class="instructie">Maak de deelsommen!<br>Sommige sommen hebben een rest.<br>Je maakt <strong>20 opdrachten</strong>.</div>
+            <div class="instructie">Maak de deelsommen!<br>Sommige sommen hebben een rest of een komma-antwoord.<br>Je maakt <strong>20 opdrachten</strong>.</div>
             <button class="button" onclick="startOefening()">▶ Start!</button>
         </div>
         <div id="gameScreen">
@@ -117,9 +117,10 @@
 
         function maakVolgorde() {
             let arr = [];
-            for (let i = 0; i < 7; i++) arr.push('metRest');
-            for (let i = 0; i < 7; i++) arr.push('klein');
-            for (let i = 0; i < 6; i++) arr.push('groot');
+            for (let i = 0; i < 5; i++) arr.push('metRest');
+            for (let i = 0; i < 5; i++) arr.push('klein');
+            for (let i = 0; i < 5; i++) arr.push('groot');
+            for (let i = 0; i < 5; i++) arr.push('komma');
             return shuffle(arr);
         }
 
@@ -159,6 +160,20 @@
                 deeltal = deler * quotient;
                 return { type, deeltal, deler, quotient, rest: 0, metRest: false };
             }
+            if (type === 'komma') {
+                const sub = Math.floor(Math.random() * 3); // 0=door100, 1=door1000, 2=door0,5
+                const deeltal = 1 + Math.floor(Math.random() * 999); // 1..999
+                if (sub === 0) {
+                    const antwoordKomma = deeltal / 100;
+                    return { type, deeltal, deler: '100', deelerWaarde: 100, quotientKomma: antwoordKomma, isKomma: true };
+                } else if (sub === 1) {
+                    const antwoordKomma = deeltal / 1000;
+                    return { type, deeltal, deler: '1.000', deelerWaarde: 1000, quotientKomma: antwoordKomma, isKomma: true };
+                } else {
+                    const antwoordKomma = deeltal / 0.5;
+                    return { type, deeltal, deler: '0,5', deelerWaarde: 0.5, quotientKomma: antwoordKomma, isKomma: true };
+                }
+            }
         }
 
         function startOefening() {
@@ -188,6 +203,8 @@
             const hint = document.getElementById('hint');
             if (huidigeSom.metRest) {
                 hint.textContent = 'Tip: typ bijvoorbeeld "6 r 4" als er een rest is.';
+            } else if (huidigeSom.isKomma) {
+                hint.textContent = 'Tip: gebruik een komma of punt, bijv. 0,43';
             } else {
                 hint.textContent = '';
             }
@@ -224,9 +241,41 @@
 
         function controleer() {
             const input = document.getElementById('antwoordInput');
-            const parsed = parseAntwoord(input.value);
             const fb = document.getElementById('feedback');
             const btn = document.getElementById('volgendeBtn');
+
+            if (huidigeSom.isKomma) {
+                let tekst = input.value.trim().replace(',', '.');
+                const waarde = parseFloat(tekst);
+                if (tekst === '' || isNaN(waarde)) {
+                    fb.textContent = 'Vul een antwoord in!';
+                    fb.style.color = '#ff6b6b';
+                    return;
+                }
+                btn.disabled = true;
+                const goed = Math.abs(waarde - huidigeSom.quotientKomma) < 0.0001;
+                const juisteTekst = huidigeSom.quotientKomma.toString().replace('.', ',');
+
+                sommen.push({
+                    som: `${huidigeSom.deeltal} : ${huidigeSom.deler}`,
+                    juist: juisteTekst,
+                    gegeven: input.value,
+                    goed
+                });
+
+                if (goed) {
+                    fb.textContent = '✅ Goed!';
+                    fb.style.color = '#28a745';
+                    setTimeout(volgende, 1000);
+                } else {
+                    fb.textContent = `${huidigeSom.deeltal} : ${huidigeSom.deler} = ${juisteTekst}`;
+                    fb.style.color = '#ff9800';
+                    setTimeout(volgende, 3000);
+                }
+                return;
+            }
+
+            const parsed = parseAntwoord(input.value);
 
             if (!parsed) {
                 fb.textContent = 'Vul een antwoord in!';
